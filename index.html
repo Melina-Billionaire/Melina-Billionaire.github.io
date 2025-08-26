@@ -211,14 +211,7 @@
     }
     document.addEventListener('DOMContentLoaded', startCountdown);
   </script>
-  
-  <script>
-    if(window.APP_DATA){
-      setup(window.APP_DATA);
-    } else {
-      console.warn('window.APP_DATA 未定义，请在此处插入数据对象');
-    }
-  </script>
+
 
     <script>
     // ======= 你的数据（已修正语法 & 易读排版） =======
@@ -530,7 +523,13 @@
       ]
     };
 
-    setup(window.APP_DATA);
+  <script>
+    if(window.APP_DATA){
+      setup(window.APP_DATA);
+    } else {
+      console.warn('window.APP_DATA 未定义，请在此处插入数据对象');
+    }
+  </script>
 
   
 </body>
