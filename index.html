@@ -4,45 +4,48 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>我的二手清单 | Second‑hand Listings | Elenco usato</title>
-  <meta name="description" content="二手物品展示页：价格对比（原价/现价/节省）、复制直达链接、参考购买链接。" />
+  <meta name="description" content="二手物品展示页：支持多图（主图+gallery）、价格对比（原价/现价/节省）、复制直达链接、参考购买链接。" />
   <style>
-    :root { --bg:#0b0c10; --card:#111218; --muted:#8b90a6; --fg:#eaeaf2; --border:#1a1c24; --chip:#1b1d26; --brand:#7c9cff; }
+    :root { --bg:#0b0c10; --card:#111218; --muted:#8b90a6; --fg:#eaeaf2; --border:#1a1c24; --chip:#1b1d26; --brand:#7c9cff; --ok:#8bf0b8; --warn:#ffd2d6; }
     html,body{height:100%}
-    body{margin:0;background:#0b0c10;color:var(--fg);font:15px/1.65 system-ui,-apple-system,Segoe UI,Roboto,'PingFang SC','Noto Sans CJK SC',Arial}
-    .container{max-width:1120px;margin:0 auto;padding:24px 16px 80px}
-    header{display:grid;gap:12px;margin-bottom:14px}
+    body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.65 system-ui,-apple-system,Segoe UI,Roboto,'PingFang SC','Noto Sans CJK SC',Arial}
+    .container{max-width:1160px;margin:0 auto;padding:28px 16px 96px}
+    header{display:grid;gap:10px;margin-bottom:16px}
     .title{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-    .title h1{margin:0;font-size:26px}
+    .title h1{margin:0;font-size:28px;letter-spacing:.2px}
     .subtitle{color:var(--muted);font-size:12.5px}
-    .grid{display:grid;gap:14px;grid-template-columns:repeat(1,minmax(0,1fr));margin-top:14px}
-    @media(min-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(min-width:1000px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-    .card{position:relative;background:linear-gradient(180deg,#12131a,#0f1016);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+    .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px;color:var(--muted);font-size:12px}
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(1,minmax(0,1fr));margin-top:16px}
+    @media(min-width:640px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(min-width:1040px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    .card{position:relative;background:linear-gradient(180deg,#141622,#0e1017);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .18s ease, box-shadow .18s ease}
+    .card:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.24)}
     .thumb{aspect-ratio:4/3;width:100%;object-fit:cover;display:block;background:#0a0b10;cursor:pointer}
-    .badge{position:absolute;top:10px;right:10px;background:rgba(10,11,20,.6);border:1px solid var(--border);color:#fff;padding:6px 10px;border-radius:12px;font-weight:700;font-size:13px}
-    .content{padding:12px 14px 14px;display:grid;gap:8px}
-    .meta{display:flex;gap:8px;flex-wrap:wrap}
-    .meta .tag{background:var(--chip);border:1px solid var(--border);color:#b9bfd7;border-radius:8px;padding:4px 8px;font-size:12px}
+    .badge{position:absolute;top:10px;right:10px;background:rgba(10,11,20,.6);border:1px solid var(--border);color:#fff;padding:6px 10px;border-radius:12px;font-weight:800;font-size:13px}
+    .content{padding:12px 14px 14px;display:grid;gap:10px}
+    .meta{display:flex;gap:6px;flex-wrap:wrap}
+    .tag{background:var(--chip);border:1px solid var(--border);color:#b9bfd7;border-radius:999px;padding:3px 8px;font-size:11.5px}
     .actions{display:flex;gap:8px;flex-wrap:wrap}
-    .btn{flex:1;text-align:center;padding:9px 10px;border-radius:10px;border:1px solid var(--border);background:#151723;color:#e6e9f6;cursor:pointer;font-weight:700}
+    .btn{flex:1;text-align:center;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#151723;color:#e6e9f6;cursor:pointer;font-weight:700}
     .btn.primary{background:linear-gradient(180deg,#2f3cff,#6f86ff);border:none}
-    .btn.link{background:#0d1117;color:#7c9cff;text-decoration:underline;flex:1}
+    .btn.link{background:#0d1117;color:#9fb4ff;text-decoration:underline;flex:1}
     .pricebox{display:flex;flex-direction:column;gap:4px}
     .line{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
     .oldprice{color:#9aa2b2;text-decoration:line-through;font-size:13px}
-    .newprice{color:#ffd2d6;font-size:18px;font-weight:800}
-    .save{color:#8bf0b8;font-weight:700;font-size:12.5px}
+    .newprice{color:var(--warn);font-size:18px;font-weight:800}
+    .save{color:var(--ok);font-weight:800;font-size:12.5px}
     .thumbs{display:flex;gap:6px;flex-wrap:wrap}
     .thumbs img{width:56px;height:42px;object-fit:cover;border:1px solid var(--border);border-radius:8px;opacity:.85;cursor:pointer}
     .thumbs img.active{outline:2px solid var(--brand);opacity:1}
-    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:9999}
+    footer{margin-top:18px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+    .count{color:#a6add0}
+    /* Lightbox */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.86);display:none;align-items:center;justify-content:center;z-index:9999}
     .lightbox.open{display:flex}
     .lightbox img{max-width:92vw;max-height:86vh;object-fit:contain}
     .lb-nav{position:fixed;inset:0;display:flex;align-items:center;justify-content:space-between;pointer-events:none}
     .lb-btn{pointer-events:auto;user-select:none;cursor:pointer;background:rgba(255,255,255,.12);border:1px solid #555;color:#fff;padding:10px 14px;border-radius:12px;margin:0 14px;font-weight:800}
     .lb-close{position:fixed;top:16px;right:16px}
-    footer{margin-top:18px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
-    .count{color:#a6add0}
   </style>
 </head>
 <body>
@@ -50,16 +53,12 @@
     <header>
       <div class="title">
         <h1>二手物品清单</h1>
-        <span class="subtitle">支持多图（主图+gallery） · 原价/现价/节省 对比 · 参考链接</span>
+        <span class="subtitle">支持多图（主图 + 预览） · 原价/现价/节省 对比 · 参考链接</span>
       </div>
+      <div class="toolbar"><span id="count">0 items</span> · <span id="contact"></span></div>
     </header>
 
     <section class="grid" id="grid"></section>
-
-    <footer>
-      <div class="count" id="count">0 items</div>
-      <div id="contact"></div>
-    </footer>
   </div>
 
   <!-- Lightbox 容器 -->
@@ -73,14 +72,15 @@
   </div>
 
   <script>
-    const I18N={ zh:{btnCopy:'CopyLink',btnWant:'我想要',btnLink:'参考链接Link🔗',priceOld:'原价',priceNow:'现价',priceSave:'节省'}, en:{btnCopy:'Copy link',btnWant:'I want it',btnLink:'Reference link',priceOld:'Original',priceNow:'Now',priceSave:'Save'}, it:{btnCopy:'Copia link',btnWant:'Mi interessa',btnLink:'Link di riferimento',priceOld:'Prezzo originale',priceNow:'Prezzo attuale',priceSave:'Risparmi'} };
+    // 多语言字典（界面用语）
+    const I18N={ zh:{btnCopy:'复制链接',btnWant:'我想要',btnLink:'参考链接',priceOld:'原价',priceNow:'现价',priceSave:'节省'}, en:{btnCopy:'Copy link',btnWant:'I want it',btnLink:'Reference link',priceOld:'Original',priceNow:'Now',priceSave:'Save'}, it:{btnCopy:'Copia link',btnWant:'Mi interessa',btnLink:'Link di riferimento',priceOld:'Prezzo originale',priceNow:'Prezzo attuale',priceSave:'Risparmi'} };
     const LANG='zh';
     const seller={ contact:'WeChat: your_wechat · Email: meii.della.serena@gmail.com', defaultCurrency:'EUR' };
     const $=s=>document.querySelector(s); const byId=id=>document.getElementById(id);
     function fmt(n,c){try{return new Intl.NumberFormat(undefined,{style:'currency',currency:c,maximumFractionDigits:n%1?2:0}).format(n)}catch(e){return `${c} ${n}`}}
     function saveCalc(it){const o=Number(it.originalPrice||0),p=Number(it.price||0);if(!o||!p||p>=o)return null;const s=o-p;const r=Math.round(s/o*100);return{s,pct:r}}
 
-    // Lightbox 状态
+    // Lightbox
     const lbEl=byId('lightbox'); const lbImg=byId('lbImg'); const lbPrev=byId('lbPrev'); const lbNext=byId('lbNext'); const lbClose=byId('lbClose');
     let lbList=[], lbIdx=0;
     function openLB(list,start=0){ lbList=list; lbIdx=start; lbImg.src=lbList[lbIdx]; lbEl.classList.add('open'); }
@@ -89,6 +89,8 @@
     lbPrev.onclick=()=>navLB(-1); lbNext.onclick=()=>navLB(1); lbClose.onclick=closeLB; lbEl.addEventListener('click',e=>{ if(e.target===lbEl) closeLB(); });
     document.addEventListener('keydown',e=>{ if(!lbEl.classList.contains('open')) return; if(e.key==='Escape') closeLB(); if(e.key==='ArrowLeft') navLB(-1); if(e.key==='ArrowRight') navLB(1); });
 
+    function chip(text){const s=document.createElement('span'); s.className='tag'; s.textContent=text; return s;}
+
     function createCard(item){
       const dict=I18N[LANG]; const currency=item.currency||seller.defaultCurrency;
       const el=document.createElement('article'); el.className='card'; el.id=item.id||('item-'+Math.random().toString(36).slice(2,8));
@@ -96,35 +98,43 @@
       const savings=saveCalc(item);
       el.innerHTML=`
         <div class="media">
-          <img class="thumb" src="${mainImg}" alt="${item.title}">
+          <img class="thumb" src="${mainImg}" alt="${item.title}" onerror="this.onerror=null;this.src='assets/placeholder.jpg';">
           <div class="badge">${fmt(item.price,currency)}</div>
         </div>
         <div class="content">
-          <h3 class="itemTitle">${item.title}</h3>
-          <div class="desc">${item.desc||''}</div>
+          <h3 class="itemTitle" style="margin:0;font-size:17px">${item.title}</h3>
+          <div class="desc" style="color:#cfd3e4;font-size:13.5px">${item.desc||''}</div>
           ${item.originalPrice? `<div class='pricebox'><div class='line'><span class='oldprice'>${dict.priceOld}: ${fmt(item.originalPrice,currency)}</span><span class='newprice'>${dict.priceNow}: ${fmt(item.price,currency)}</span>${savings? `<span class='save'>${dict.priceSave}: ${fmt(savings.s,currency)} (~${savings.pct}%)</span>`:''}</div></div>`:''}
           <div class="meta"></div>
+          <div class="thumbs"></div>
           <div class="actions">
             <button class="btn" data-copy="#${el.id}">${dict.btnCopy}</button>
             <a class="btn primary" href="mailto:?subject=${encodeURIComponent('Inquiry: '+item.title)}&body=${encodeURIComponent(location.href.split('#')[0]+'#'+el.id)}">${dict.btnWant}</a>
-            ${item.link? `<a class="btn link" href="${item.link}" target="_blank">${dict.btnLink}</a>`:''}
+            ${item.link? `<a class="btn link" href="${item.link}" target="_blank" rel="noopener noreferrer">${dict.btnLink}</a>`:''}
           </div>
         </div>`;
 
-      // 缩略图条
+      // 元信息 chips
+      const meta=el.querySelector('.meta');
+      if(item.category) meta.appendChild(chip(item.category));
+      if(item.condition) meta.appendChild(chip(item.condition));
+      if(item.location) meta.appendChild(chip(item.location));
+      if(item.status) meta.appendChild(chip(item.status));
+
+      // 缩略图条（gallery）
       if(Array.isArray(item.gallery) && item.gallery.length){
-        const bar=document.createElement('div'); bar.className='thumbs';
+        const bar=el.querySelector('.thumbs');
+        const cover=el.querySelector('.thumb');
         item.gallery.forEach((src,idx)=>{
           const t=document.createElement('img'); t.src=src; t.alt=item.title+'-'+(idx+1);
-          if(src===mainImg) t.classList.add('active');
+          if(src===cover.getAttribute('src')) t.classList.add('active');
           t.addEventListener('click',()=>{
-            el.querySelector('.thumb').src=src;
+            cover.src=src;
             bar.querySelectorAll('img').forEach(i=>i.classList.remove('active'));
             t.classList.add('active');
           });
           bar.appendChild(t);
         });
-        el.querySelector('.content').insertBefore(bar, el.querySelector('.actions'));
       }
 
       // 复制直达链接
@@ -156,16 +166,17 @@
   </script>
 
   <script>
+    // ======= 你的数据（已修正语法 & 易读排版） =======
     window.APP_DATA = {
       items: [
         {
           id: 'jd1_mirror',
-          title: "圆角设计感全身镜",
-          desc: '53 x 163 cm, 可悬挂于墙壁或落地，适合客厅更衣室，金色，',
+          title: '圆角设计感全身镜',
+          desc: '53 × 163 cm，可悬挂/落地，适合客厅与更衣室，金色',
           price: 38,
           originalPrice: 137.59,
           currency: 'EUR',
-          category: '家电',
+          category: '家具',
           condition: '九成新',
           location: 'Como/Milano',
           img: 'assets/jd/jd1_mirror/jd1_3.png',
@@ -180,12 +191,12 @@
         },
         {
           id: 'jd2_mattress',
-          title: '双人记忆充气床垫，160 x 200厘米，高24厘米，硬度8.5/10 | Double Memory Air Mattress 160 x 200 cm',
-          desc: 'Grandeur 是一款记忆充气床垫，拥有七种不同的容量。记忆充气床垫是一款革命性的产品，为睡眠世界带来了全新的理念，七个不同承重区域的处理确保了完美的人体工程学设计，使脊柱能够完全贴合床垫表面，从而在休息时保持理想的姿势。',
+          title: '双人记忆充气床垫 160×200×24 cm（硬度 8.5/10）',
+          desc: '七区承托设计，贴合脊柱曲线，休息时保持理想姿势',
           price: 25,
           originalPrice: 215,
           currency: 'EUR',
-          category: '家电',
+          category: '家具',
           condition: '九成新',
           location: 'Como/Milano',
           img: 'assets/jd/jd2_mattress/jd2_1.jpg',
@@ -200,8 +211,8 @@
         },
         {
           id: 'jd3_stand',
-          title: '重型旋转桌面支架，带气弹簧',
-          desc: '可容纳两台 22-32 英寸 LED 液晶显示器，VESA 最大尺寸 100x100 毫米，承重 2x12 公斤',
+          title: '重型旋转桌面支架（双屏，气弹簧）',
+          desc: '支持 22–32 英寸，VESA ≤100×100mm，单臂承重 12 kg',
           price: 18,
           originalPrice: 50,
           currency: 'EUR',
@@ -219,8 +230,8 @@
         },
         {
           id: 'jd4_ac',
-          title: "德龙空调 ｜ DeLonghi Pinguino PAC N81",
-          desc: '53 x 163 cm, 可悬挂于墙壁或落地，适合客厅更衣室，金色，',
+          title: '德龙空调 · DeLonghi Pinguino PAC N81',
+          desc: '一体式移动空调，适合卧室/客厅',
           price: 188.88,
           originalPrice: 480,
           currency: 'EUR',
@@ -238,8 +249,8 @@
         },
         {
           id: 'jd5_chair',
-          title: 'SIHOO 办公椅，人体工学椅',
-          desc: '360°旋转，可折叠和翻转扶手，透气网布舒适腰部支撑办公椅，灰色尼龙万向轮。62D x 63W x 99.5H 厘米',
+          title: 'SIHOO 人体工学办公椅',
+          desc: '可旋转/翻转扶手，透气网布，腰部支撑，62×63×99.5 cm',
           price: 35,
           originalPrice: 145,
           currency: 'EUR',
@@ -258,7 +269,7 @@
         {
           id: 'jd6_airfryer',
           title: 'Involly 15L 空气炸锅',
-          desc: '18 合 1 三重结构热风烤箱，迷你披萨烤箱，不锈钢电烤箱，快速烹饪，少油，4 个配件和 26 种食谱，1600W',
+          desc: '18 合 1 热风烤箱，不锈钢机身，1600W，含 4 配件与 26 份食谱',
           price: 58.99,
           originalPrice: 158.99,
           currency: 'EUR',
@@ -272,12 +283,12 @@
         },
         {
           id: 'jd7_pat',
-          title: '毛茸茸客厅地毯',
-          desc: '135 x 185 cm, 长绒地毯，现代客厅卧室地毯，防滑柔软蓬松（灰白色',
+          title: '毛茸茸客厅地毯 135×185 cm（灰白）',
+          desc: '长绒、现代风、防滑、柔软蓬松',
           price: 8.99,
           originalPrice: 32.99,
           currency: 'EUR',
-          category: '家电',
+          category: '家居',
           condition: '九成新',
           location: 'Como/Milano',
           img: 'assets/jd/jd7_pat/jd7_1.png',
@@ -292,12 +303,12 @@
         },
         {
           id: 'jd8_pot',
-          title: 'KASANOVA 黄金8件套红色炊具',
-          desc: '适合全家使用的完美烹饪套装：20 厘米和 28 厘米煎锅、18 厘米和 24 厘米炖锅，以及一个 28 厘米带盖深煎锅。亮红色设计，不含 PFOA 的不粘涂层，以及适用于电磁炉和所有炉灶的锅底。',
+          title: 'KASANOVA 黄金 8 件套红色炊具',
+          desc: '套装含 20/28cm 煎锅、18/24cm 炖锅、28cm 深煎锅（带盖）；不含 PFOA；适用于电磁炉及各类炉灶',
           price: 30,
           originalPrice: 69.90,
           currency: 'EUR',
-          category: '家电',
+          category: '家居',
           condition: '九成新',
           location: 'Como/Milano',
           img: 'assets/jd/jd8_pot/jd8_1.png',
@@ -307,16 +318,16 @@
           ],
           date: '2025-08-24',
           status: 'available',
-          link: 'https://www.amazon.it/dp/B0BQMHXV96?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1'
+          link: 'https://www.amazon.it/'
         },
         {
           id: 'jd9_lamp',
           title: 'IKEA 小台灯',
-          desc: '这款台灯的缝制灯罩宛如一朵柔软的白云，由再生聚酯纤维制成，散发出令人愉悦的氛围。它低调小巧，适合摆放在家中任何房间。',
+          desc: '缝制灯罩如柔软白云，回收聚酯纤维材质，营造温馨氛围',
           price: 8,
           originalPrice: 19.95,
           currency: 'EUR',
-          category: '家电',
+          category: '家居',
           condition: '九成新',
           location: 'Como/Milano',
           img: 'assets/jd/jd9_lamp/jd9_1.png',
@@ -331,7 +342,7 @@
         {
           id: 'st1_mouse',
           title: '罗技 POP 无线鼠标',
-          desc: '配备可自定义表情符号、SilentTouch 技术、精准快速、紧凑设计、蓝牙、USB、多设备、操作系统兼容 - Heartbreaker',
+          desc: '可自定义表情、SilentTouch 静音、蓝牙/USB、多设备，Heartbreaker 配色',
           price: 15,
           originalPrice: 55.5,
           currency: 'EUR',
@@ -349,8 +360,8 @@
         },
         {
           id: 'st2_monitor',
-          title: 'Lenovo L24e-30 Monitor电脑屏幕显示器1️⃣',
-          desc: '23.8 英寸全高清显示屏（1920x1080、IPS、4 毫秒、75Hz、HDMI+VGA 输入、HDMI 线缆、AMD FreeSync）可调节倾斜度',
+          title: 'Lenovo L24e‑30 显示器（1️⃣）',
+          desc: '23.8" FHD 1920×1080 · IPS · 4ms · 75Hz · HDMI/VGA · FreeSync',
           price: 80,
           originalPrice: 158.99,
           currency: 'EUR',
@@ -364,12 +375,12 @@
           ],
           date: '2025-08-24',
           status: 'available',
-          link: 'https://www.amazon.it/-/en/Lenovo-L24e-30-Monitor-1920x1080-Adjustable/dp/B08K96T1Z8/ref=sr_1_6?dib=eyJ2IjoiMSJ9.Weqlr7bjNzOnSUyM3yg7KcGL7-2f324j1IyYt5zmwhXqeiaPSFjh28-nynWYbW2t-rdRv8ZNrPKlC_7FXBZD-O2Va6p1LDtNXCB0dGFCaESy1WMu6SGkog2CpkFQ6F5Ef9mKsU2na_b4jtl0zA_eu0TwIYxjmiMmarFIu-5echvtPDKCMq5ut18fOPOPaM-Kptta4fJGpt-BP2up9K7OPod44VGPF2J8J-F1jpyn9y7U5zHNFhFXS1w6q3EXf8Q0G9tEMP9HgkP8NWbY9EBHStTIz64NXIaIEQkCsN8Xb1o.bT-AIbZA5DjX_SqUNJMnAziEnq4ysaNZC3hR_DU0740&dib_tag=se&keywords=Lenovo+L24e-30+Monitor+-+Display+24%22+FullHD+%281920x1080%2C&qid=1756218194&sr=8-6'
+          link: 'https://www.amazon.it/-/en/Lenovo-L24e-30-Monitor-1920x1080-Adjustable/dp/B08K96T1Z8/'
         },
         {
           id: 'st2_monitor_2',
-          title: 'Lenovo Q24i-1L Monitor电脑屏幕显示器2️⃣',
-          desc: '23.8 英寸全高清/IPS 显示屏，1920x1080，超薄边框，FreeSync，4ms，75Hz，HDMI 线缆，HDMI 输入 + VGA，可调节倾斜度',
+          title: 'Lenovo Q24i‑1L 显示器（2️⃣）',
+          desc: '23.8" FHD · IPS · 窄边框 · FreeSync · 4ms · 75Hz · HDMI/VGA',
           price: 80,
           originalPrice: 168.31,
           currency: 'EUR',
@@ -383,11 +394,12 @@
           ],
           date: '2025-08-24',
           status: 'available',
-          link: 'https://www.pccomponentes.it/lenovo-q24i-1l-238-led-ips-fullhd-75hz-freesync?srsltid=AfmBOoouxQ3zlACshuEBsan4zkCpJzsrf_Agamy-joZpvwpNTfyjLxeO'
+          link: 'https://www.pccomponentes.it/lenovo-q24i-1l-238-led-ips-fullhd-75hz-freesync'
+        },
         {
           id: 'st3_lamp2',
-          title: '双光源屏幕护眼灯💡',
-          desc: '带夹子的灯，带定时器和记忆功能的双头护眼 LED 台灯，可用于学习、显示器',
+          title: '双光源屏幕护眼灯 💡',
+          desc: '夹式双头护眼 LED 台灯，带定时与记忆功能，学习/显示器适用',
           price: 12,
           originalPrice: 45,
           currency: 'EUR',
@@ -405,8 +417,8 @@
         },
         {
           id: 'st4_laptop_stand',
-          title: '可调节垂直笔记本电脑支架',
-          desc: '6061 铝合金，CNC 精密加工，阳极氧化处理，适用于所有笔记本电脑（包括 17 英寸），通风设计，防滑硅胶垫',
+          title: '可调节垂直笔记本支架',
+          desc: '6061 铝合金 · CNC 精密加工 · 适配至 17" · 通风散热 · 防滑硅胶',
           price: 5,
           originalPrice: 15.99,
           currency: 'EUR',
@@ -424,8 +436,8 @@
         },
         {
           id: 'st5_charger',
-          title: 'Anker USB C Charger 47W',
-          desc: 'Anker USB C 充电器 47W 充电器 523 (Nano 3) 紧凑型带 2 个 GaN 端口快速充电器，适用于 iPhone 16/16 Plus/16 Pro Max/15/14/13/12、Galaxy、Pixel 4/3、iPad/iPad Mini（不含数据线）',
+          title: 'Anker USB‑C 充电器 47W (Nano 3)',
+          desc: '2 口 GaN 快充；适配 iPhone/Galaxy/Pixel/iPad 等（不含线）',
           price: 5,
           originalPrice: 19.99,
           currency: 'EUR',
@@ -443,8 +455,8 @@
         },
         {
           id: 'st6_batteries',
-          title: '纽扣电池 CR2032',
-          desc: 'CR2032 7 节装锂纽扣电池 CR 2032 3 V，来自 GP Extra 系列耐用性：在存储环境中可持续使用长达 10 年 - GP 品牌 CR2032 电池以其惊人的耐用性脱颖而出，使其在性价比方面绝对卓越安全：额外的技术可以最大程度地防止溢出，确保您和您的设备的安全',
+          title: '纽扣电池 CR2032（7 粒装）',
+          desc: 'GP Extra 3V；耐用防漏，存放可达 10 年',
           price: 3,
           originalPrice: 10.99,
           currency: 'EUR',
@@ -459,7 +471,7 @@
           date: '2025-08-24',
           status: 'available',
           link: 'https://www.amazon.it/dp/B07QLZ3DGG?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1'
-        },
+        }
       ]
     };
 
