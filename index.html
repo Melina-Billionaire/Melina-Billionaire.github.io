@@ -4,138 +4,53 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>我的二手清单 | Second‑hand Listings | Elenco usato</title>
-  <meta name="description" content="二手物品展示页：三语界面（中/英/意），搜索筛选、价格对比（原价/现价/节省）、售出标记、复制直达链接。" />
+  <meta name="description" content="二手物品展示页：支持多图（主图+gallery）、价格对比（原价/现价/节省）、复制直达链接、参考购买链接。" />
   <style>
-    :root {
-      --bg: #0b0c10; --card: #111218; --muted: #8b90a6; --fg: #eaeaf2; --brand: #7c9cff; --ok:#25c08a; --warn:#ffb020; --danger:#ff4d6d; --chip:#1b1d26; --border:#1a1c24;
-    }
-    html, body { height: 100%; }
-    body { margin:0; background: radial-gradient(1200px 600px at 20% -10%, #14172a 0, #0b0c10 60%), #0b0c10; color: var(--fg); font: 15px/1.65 system-ui,-apple-system,Segoe UI,Roboto,"PingFang SC","Noto Sans CJK SC",Helvetica,Arial,sans-serif; }
-    .container { max-width: 1120px; margin: 0 auto; padding: 24px 16px 80px; }
-    header { display:grid; gap:12px; margin-bottom: 14px; }
-    .title { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
-    .title h1 { margin:0; font-size:26px; letter-spacing:.2px; }
-    .subtitle { color:var(--muted); font-size:12.5px; }
-
-    .toolbar { display:grid; gap:10px; margin-top: 6px; }
-    .row { display:grid; grid-template-columns: 1fr; gap:8px; }
-    @media (min-width: 760px){ .row{ grid-template-columns: 1.2fr .9fr .9fr .7fr .6fr; } }
-    .input, select { width:100%; background: var(--card); color: var(--fg); border:1px solid var(--border); border-radius: 12px; padding:10px 12px; outline:none; }
-    .input::placeholder { color:#9aa2b2; }
-
-    .chips { display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; }
-    .chip { background: var(--chip); color: var(--muted); border:1px solid var(--border); border-radius: 999px; padding:6px 10px; font-size:12px; cursor:pointer; }
-
-    .lang { display:flex; gap:8px; align-items:center; justify-content:flex-end; }
-    .lang button { background: var(--chip); color:#cfd5ee; border:1px solid var(--border); padding:6px 10px; border-radius:10px; cursor:pointer; font-weight:600; }
-    .lang button.active { background: linear-gradient(180deg, #2f3cff, #6f86ff); border:none; }
-
-    .grid { display:grid; gap:14px; grid-template-columns: repeat(1, minmax(0,1fr)); margin-top: 14px; }
-    @media (min-width: 560px){ .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
-    @media (min-width: 1000px){ .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
-
-    .card { position:relative; background: linear-gradient(180deg, #12131a, #0f1016); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow: 0 10px 24px rgba(0,0,0,.35); }
-    .thumb { aspect-ratio: 4/3; width:100%; object-fit:cover; display:block; background:#0a0b10; }
-    .badge { position:absolute; top:10px; right:10px; background: rgba(10,11,20,.6); backdrop-filter: blur(8px); border:1px solid var(--border); color:#fff; padding:6px 10px; border-radius:12px; font-weight:700; font-size:13px; }
-    .status { position:absolute; inset:0; display:none; place-items:center; text-transform:uppercase; letter-spacing:3px; background: rgba(0,0,0,.55); color:#fff; font-weight:800; font-size:18px; }
-    .card.sold .thumb { filter: grayscale(1) contrast(.85) brightness(.85); }
-    .card.sold .status { display:grid; }
-    .card.reserved .badge { background: rgba(255,176,32,.18); border-color:#664b11; }
-
-    .content { padding: 12px 14px 14px; display:grid; gap:8px; }
-    .titleRow { display:flex; justify-content:space-between; gap:8px; }
-    .itemTitle { margin:0; font-size:16px; font-weight:800; }
-    .muted { color: var(--muted); font-size:12px; }
-    .desc { color:#c9cfe4; font-size:13px; min-height: 2.1em; }
-    .meta { display:flex; gap:8px; flex-wrap:wrap; }
-    .meta .tag { background: var(--chip); border:1px solid var(--border); color:#b9bfd7; border-radius:8px; padding:4px 8px; font-size:12px; }
-
-    .pricebox { display:flex; flex-direction:column; gap:4px; }
-    .line { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
-    .oldprice { color:#9aa2b2; text-decoration: line-through; font-size:13px; }
-    .newprice { color:#ffd2d6; font-size:18px; font-weight:800; }
-    .save { color:#8bf0b8; font-weight:700; font-size:12.5px; }
-
-    .actions { display:flex; gap:8px; }
-    .btn { flex:1; text-align:center; padding:9px 10px; border-radius:10px; border:1px solid var(--border); background:#151723; color:#e6e9f6; cursor:pointer; font-weight:700; }
-    .btn:hover { filter:brightness(1.05); }
-    .btn.primary { background: linear-gradient(180deg, #2f3cff, #6f86ff); border:none; }
-    .btn[disabled]{ opacity:.6; cursor:not-allowed; }
-
-    footer { margin-top: 18px; color: var(--muted); font-size:12px; display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; }
-    .count { color:#a6add0; }
-
-    details.guide{ background:#0e1020; border:1px dashed #2a2f44; border-radius:12px; padding:10px 12px; margin: 12px 0; }
-    details.guide summary{ cursor:pointer; color:#cdd3ef; font-weight:700; }
-    details.guide pre{ white-space:pre-wrap; color:#c5cbea; background:#0b0d19; border:1px solid #1b1f33; padding:10px 12px; border-radius:10px; overflow:auto; }
+    :root { --bg:#0b0c10; --card:#111218; --muted:#8b90a6; --fg:#eaeaf2; --border:#1a1c24; --chip:#1b1d26; --brand:#7c9cff; }
+    html,body{height:100%}
+    body{margin:0;background:#0b0c10;color:var(--fg);font:15px/1.65 system-ui,-apple-system,Segoe UI,Roboto,'PingFang SC','Noto Sans CJK SC',Arial}
+    .container{max-width:1120px;margin:0 auto;padding:24px 16px 80px}
+    header{display:grid;gap:12px;margin-bottom:14px}
+    .title{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+    .title h1{margin:0;font-size:26px}
+    .subtitle{color:var(--muted);font-size:12.5px}
+    .grid{display:grid;gap:14px;grid-template-columns:repeat(1,minmax(0,1fr));margin-top:14px}
+    @media(min-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(min-width:1000px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    .card{position:relative;background:linear-gradient(180deg,#12131a,#0f1016);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+    .thumb{aspect-ratio:4/3;width:100%;object-fit:cover;display:block;background:#0a0b10;cursor:pointer}
+    .badge{position:absolute;top:10px;right:10px;background:rgba(10,11,20,.6);border:1px solid var(--border);color:#fff;padding:6px 10px;border-radius:12px;font-weight:700;font-size:13px}
+    .content{padding:12px 14px 14px;display:grid;gap:8px}
+    .meta{display:flex;gap:8px;flex-wrap:wrap}
+    .meta .tag{background:var(--chip);border:1px solid var(--border);color:#b9bfd7;border-radius:8px;padding:4px 8px;font-size:12px}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{flex:1;text-align:center;padding:9px 10px;border-radius:10px;border:1px solid var(--border);background:#151723;color:#e6e9f6;cursor:pointer;font-weight:700}
+    .btn.primary{background:linear-gradient(180deg,#2f3cff,#6f86ff);border:none}
+    .btn.link{background:#0d1117;color:#7c9cff;text-decoration:underline;flex:1}
+    .pricebox{display:flex;flex-direction:column;gap:4px}
+    .line{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+    .oldprice{color:#9aa2b2;text-decoration:line-through;font-size:13px}
+    .newprice{color:#ffd2d6;font-size:18px;font-weight:800}
+    .save{color:#8bf0b8;font-weight:700;font-size:12.5px}
+    .thumbs{display:flex;gap:6px;flex-wrap:wrap}
+    .thumbs img{width:56px;height:42px;object-fit:cover;border:1px solid var(--border);border-radius:8px;opacity:.85;cursor:pointer}
+    .thumbs img.active{outline:2px solid var(--brand);opacity:1}
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:9999}
+    .lightbox.open{display:flex}
+    .lightbox img{max-width:92vw;max-height:86vh;object-fit:contain}
+    .lb-nav{position:fixed;inset:0;display:flex;align-items:center;justify-content:space-between;pointer-events:none}
+    .lb-btn{pointer-events:auto;user-select:none;cursor:pointer;background:rgba(255,255,255,.12);border:1px solid #555;color:#fff;padding:10px 14px;border-radius:12px;margin:0 14px;font-weight:800}
+    .lb-close{position:fixed;top:16px;right:16px}
+    footer{margin-top:18px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+    .count{color:#a6add0}
   </style>
 </head>
 <body>
   <div class="container">
     <header>
       <div class="title">
-        <h1 data-i18n="title">二手物品清单</h1>
-        <span class="subtitle" data-i18n="subtitle">三语界面 · 支持搜索/筛选/排序 · 原价/现价/节省显示</span>
-      </div>
-
-      <div class="lang">
-        <span class="muted" data-i18n="langLabel">界面语言：</span>
-        <button data-lang="zh" class="active">中文</button>
-        <button data-lang="en">English</button>
-        <button data-lang="it">Italiano</button>
-      </div>
-
-      <details class="guide">
-        <summary data-i18n="howto">📌 使用说明（点我展开）</summary>
-        <div style="margin-top:8px">
-          <ol>
-            <li data-i18n="g1">把本文件与图片放在同一文件夹，或使用图片的在线直链。</li>
-            <li data-i18n="g2">在最底部 <b>items</b> 数组替换示例数据：支持 <code>originalPrice</code>（原价）与 <code>price</code>（现价）。</li>
-            <li data-i18n="g3">上方可切换语言（中/英/意），卡片内所有标签与价格对比会同步切换。</li>
-            <li data-i18n="g4">页脚可放你的联系方式，支持文字或二维码图片（见 <code>seller.contact</code>）。</li>
-          </ol>
-          <pre><code>// 条目字段示例：
-// {
-//   id: "SKU-001",            // 可选，自动生成
-//   title: "全身镜 150×40cm",
-//   desc: "9成新，带支架，可靠墙，搬家出",
-//   price: 35,                 // 现价
-//   originalPrice: 137.59,     // 原价（可选）
-//   currency: "EUR",          // 默认跟随 seller.defaultCurrency
-//   category: "家具",
-//   condition: "九成新",
-//   location: "Milano - Domodossola M5 / Como - Borghi",
-//   img: "assets/mirror.jpg",
-//   date: "2025-08-26",
-//   status: "available"       // available / reserved / sold
-// }
-</code></pre>
-        </div>
-      </details>
-
-      <div class="toolbar">
-        <div class="row">
-          <input class="input" id="q" placeholder="🔎 搜索标题/描述/分类… Search" />
-          <select id="cat"><option value="" data-i18n="allCats">全部分类 · All</option></select>
-          <select id="sort">
-            <option value="date_desc" data-i18n="sortNew">最新优先</option>
-            <option value="price_asc" data-i18n="sortPriceLow">价格从低到高</option>
-            <option value="price_desc" data-i18n="sortPriceHigh">价格从高到低</option>
-            <option value="title_asc" data-i18n="sortTitle">标题 A→Z</option>
-          </select>
-          <select id="status">
-            <option value="" data-i18n="statusAll">状态：全部</option>
-            <option value="available" data-i18n="statusAvail">在售</option>
-            <option value="reserved" data-i18n="statusResv">预定</option>
-            <option value="sold" data-i18n="statusSold">已售</option>
-          </select>
-          <select id="currencySel">
-            <option value="EUR">EUR</option>
-            <option value="CNY">CNY</option>
-            <option value="USD">USD</option>
-          </select>
-        </div>
-        <div class="chips" id="chips"></div>
+        <h1>二手物品清单</h1>
+        <span class="subtitle">支持多图（主图+gallery） · 原价/现价/节省 对比 · 参考链接</span>
       </div>
     </header>
 
@@ -147,182 +62,121 @@
     </footer>
   </div>
 
+  <!-- Lightbox 容器 -->
+  <div class="lightbox" id="lightbox">
+    <button class="lb-btn lb-close" id="lbClose">✕</button>
+    <img id="lbImg" alt="preview" />
+    <div class="lb-nav">
+      <button class="lb-btn" id="lbPrev">◀</button>
+      <button class="lb-btn" id="lbNext">▶</button>
+    </div>
+  </div>
+
   <script>
-    // ============ 多语言字典 ============
-    const I18N = {
-      zh: {
-        title: '二手物品清单', subtitle: '三语界面 · 支持搜索/筛选/排序 · 原价/现价/节省显示',
-        howto:'📌 使用说明（点我展开）', g1:'把本文件与图片放在同一文件夹，或使用图片的在线直链。', g2:'在最底部 items 数组替换示例数据：支持 originalPrice（原价）与 price（现价）。', g3:'上方可切换语言（中/英/意），卡片内所有标签与价格对比会同步切换。', g4:'页脚可放你的联系方式，支持文字或二维码图片（见 seller.contact）。',
-        allCats:'全部分类 · All', sortNew:'最新优先', sortPriceLow:'价格从低到高', sortPriceHigh:'价格从高到低', sortTitle:'标题 A→Z', statusAll:'状态：全部', statusAvail:'在售', statusResv:'预定', statusSold:'已售',
-        tagCat:'分类', tagCond:'成色', tagLoc:'地点', tagDate:'上架', btnCopy:'复制链接', btnWant:'我想要', soldMark:'已售 SOLD', reservedMark:'预定 RESERVED', langLabel:'界面语言：',
-        priceOld:'原价', priceNow:'现价', priceSave:'节省', saving:'节省 {s}（约 {p}%）'
-      },
-      en: {
-        title:'Second‑hand Listings', subtitle:'Tri‑lingual UI · Search/Filter/Sort · Original/Now/Save display',
-        howto:'📌 How to use (click to expand)', g1:'Keep this file and images together, or use direct image URLs.', g2:'Edit items at the bottom: supports originalPrice (old) and price (now).', g3:'Switch language (ZH/EN/IT) above; cards update accordingly.', g4:'Put your contact in the footer; text or QR image supported (seller.contact).',
-        allCats:'All categories', sortNew:'Newest first', sortPriceLow:'Price: low to high', sortPriceHigh:'Price: high to low', sortTitle:'Title A→Z', statusAll:'Status: All', statusAvail:'Available', statusResv:'Reserved', statusSold:'Sold',
-        tagCat:'Category', tagCond:'Condition', tagLoc:'Location', tagDate:'Listed', btnCopy:'Copy link', btnWant:'I want it', soldMark:'SOLD', reservedMark:'RESERVED', langLabel:'Language:',
-        priceOld:'Original', priceNow:'Now', priceSave:'Save', saving:'Save {s} (~{p}%)'
-      },
-      it: {
-        title:'Elenco usato', subtitle:'Interfaccia trilingue · Ricerca/Filtri/Ordina · Prezzo originale/attuale/risparmio',
-        howto:'📌 Istruzioni (clicca per espandere)', g1:'Tieni questo file e le immagini nella stessa cartella, o usa URL diretti.', g2:'Modifica gli items in fondo: supporta originalPrice (prezzo originale) e price (attuale).', g3:'Cambia lingua (ZH/EN/IT) sopra; le schede si aggiornano.', g4:'Inserisci i contatti nel footer; testo o QR (seller.contact).',
-        allCats:'Tutte le categorie', sortNew:'Più recenti', sortPriceLow:'Prezzo: dal basso all’alto', sortPriceHigh:'Prezzo: dall’alto al basso', sortTitle:'Titolo A→Z', statusAll:'Stato: Tutti', statusAvail:'Disponibile', statusResv:'Prenotato', statusSold:'Venduto',
-        tagCat:'Categoria', tagCond:'Condizione', tagLoc:'Luogo', tagDate:'Pubblicato', btnCopy:'Copia link', btnWant:'Mi interessa', soldMark:'VENDUTO', reservedMark:'PRENOTATO', langLabel:'Lingua:',
-        priceOld:'Prezzo originale', priceNow:'Prezzo attuale', priceSave:'Risparmi', saving:'Risparmi {s} (~{p}%)'
-      }
-    };
+    const I18N={ zh:{btnCopy:'CopyLink',btnWant:'我想要/I WANT',btnLink:'参考链接Link🔗',priceOld:'原价',priceNow:'现价',priceSave:'节省'}, en:{btnCopy:'Copy link',btnWant:'I want it',btnLink:'Reference link',priceOld:'Original',priceNow:'Now',priceSave:'Save'}, it:{btnCopy:'Copia link',btnWant:'Mi interessa',btnLink:'Link di riferimento',priceOld:'Prezzo originale',priceNow:'Prezzo attuale',priceSave:'Risparmi'} };
+    const LANG='zh';
+    const seller={ contact:'WeChat: your_wechat · Email: meii.della.serena@gmail.com', defaultCurrency:'EUR' };
+    const $=s=>document.querySelector(s); const byId=id=>document.getElementById(id);
+    function fmt(n,c){try{return new Intl.NumberFormat(undefined,{style:'currency',currency:c,maximumFractionDigits:n%1?2:0}).format(n)}catch(e){return `${c} ${n}`}}
+    function saveCalc(it){const o=Number(it.originalPrice||0),p=Number(it.price||0);if(!o||!p||p>=o)return null;const s=o-p;const r=Math.round(s/o*100);return{s,pct:r}}
 
-    // ============ 卖家信息与默认货币 ============
-    const seller = {
-      name: 'Seller',
-      contact: '联系我 / Contact / Contatti：WeChat: your_wechat · Email: meii.della.serena@gmail.com',
-      defaultCurrency: 'EUR'
-    };
+    // Lightbox 状态
+    const lbEl=byId('lightbox'); const lbImg=byId('lbImg'); const lbPrev=byId('lbPrev'); const lbNext=byId('lbNext'); const lbClose=byId('lbClose');
+    let lbList=[], lbIdx=0;
+    function openLB(list,start=0){ lbList=list; lbIdx=start; lbImg.src=lbList[lbIdx]; lbEl.classList.add('open'); }
+    function closeLB(){ lbEl.classList.remove('open'); }
+    function navLB(d){ if(!lbList.length) return; lbIdx=(lbIdx+d+lbList.length)%lbList.length; lbImg.src=lbList[lbIdx]; }
+    lbPrev.onclick=()=>navLB(-1); lbNext.onclick=()=>navLB(1); lbClose.onclick=closeLB; lbEl.addEventListener('click',e=>{ if(e.target===lbEl) closeLB(); });
+    document.addEventListener('keydown',e=>{ if(!lbEl.classList.contains('open')) return; if(e.key==='Escape') closeLB(); if(e.key==='ArrowLeft') navLB(-1); if(e.key==='ArrowRight') navLB(1); });
 
-    // ============ 工具函数 ============
-    const $ = (s, el=document)=> el.querySelector(s);
-    const $$ = (s, el=document)=> Array.from(el.querySelectorAll(s));
-    const byId = id => document.getElementById(id);
-
-    function fmtMoney(n, c){ try{ return new Intl.NumberFormat(undefined,{style:'currency', currency:c, maximumFractionDigits: n%1?2:0}).format(n);}catch(e){ return `${c} ${n}`; } }
-    function unique(a){ return Array.from(new Set(a)); }
-
-    function sortItems(items, mode){
-      const arr = [...items];
-      switch(mode){
-        case 'price_asc': return arr.sort((a,b)=> (a.price??0)-(b.price??0));
-        case 'price_desc': return arr.sort((a,b)=> (b.price??0)-(a.price??0));
-        case 'title_asc': return arr.sort((a,b)=> String(a.title).localeCompare(String(b.title)));
-        case 'date_desc':
-        default: return arr.sort((a,b)=> new Date(b.date||0) - new Date(a.date||0));
-      }
-    }
-
-    function saveCalc(item){
-      const oldP = Number(item.originalPrice||0), nowP = Number(item.price||0);
-      if(!oldP || !nowP || nowP>=oldP) return null;
-      const s = (oldP - nowP);
-      const p = Math.round( (s/oldP) * 100 );
-      return {s, p};
-    }
-
-    // ============ 渲染卡片 ============
-    function createCard(item, lang, currencySel){
-      const dict = I18N[lang] || I18N.zh;
-      const currency = currencySel || item.currency || seller.defaultCurrency;
-      const el = document.createElement('article');
-      el.className = `card ${item.status==='sold'?'sold':''} ${item.status==='reserved'?'reserved':''}`;
-      el.id = item.id || `item-${Math.random().toString(36).slice(2,8)}`;
-
-      const savings = saveCalc(item);
-      const badgeText = fmtMoney(item.price, currency);
-
-      el.innerHTML = `
+    function createCard(item){
+      const dict=I18N[LANG]; const currency=item.currency||seller.defaultCurrency;
+      const el=document.createElement('article'); el.className='card'; el.id=item.id||('item-'+Math.random().toString(36).slice(2,8));
+      const mainImg=item.img || (item.gallery&&item.gallery[0]);
+      const savings=saveCalc(item);
+      el.innerHTML=`
         <div class="media">
-          <img class="thumb" src="${item.img}" alt="${item.title}" loading="lazy"/>
-          <div class="badge">${badgeText}</div>
-          <div class="status">${item.status==='sold'? dict.soldMark : item.status==='reserved'? dict.reservedMark : ''}</div>
+          <img class="thumb" src="${mainImg}" alt="${item.title}">
+          <div class="badge">${fmt(item.price,currency)}</div>
         </div>
         <div class="content">
-          <div class="titleRow"><h3 class="itemTitle">${item.title}</h3></div>
-          <div class="desc">${item.desc || ''}</div>
-
-          <div class="pricebox">
-            ${item.originalPrice? `<div class="line"><span class="oldprice">${dict.priceOld}: ${fmtMoney(item.originalPrice, currency)}</span><span class="newprice">${dict.priceNow}: ${fmtMoney(item.price, currency)}</span>${savings? `<span class="save">${dict.priceSave}: ${fmtMoney(savings.s, currency)} (~${savings.p}%)</span>`: ''}</div>` : ''}
-          </div>
-
-          <div class="meta">
-            ${item.category? `<span class="tag">${dict.tagCat} ${item.category}</span>`:''}
-            ${item.condition? `<span class="tag">${dict.tagCond} ${item.condition}</span>`:''}
-            ${item.location? `<span class="tag">${dict.tagLoc} ${item.location}</span>`:''}
-            ${item.date? `<span class="tag">${dict.tagDate} ${item.date}</span>`:''}
-          </div>
-
+          <h3 class="itemTitle">${item.title}</h3>
+          <div class="desc">${item.desc||''}</div>
+          ${item.originalPrice? `<div class='pricebox'><div class='line'><span class='oldprice'>${dict.priceOld}: ${fmt(item.originalPrice,currency)}</span><span class='newprice'>${dict.priceNow}: ${fmt(item.price,currency)}</span>${savings? `<span class='save'>${dict.priceSave}: ${fmt(savings.s,currency)} (~${savings.pct}%)</span>`:''}</div></div>`:''}
+          <div class="meta"></div>
           <div class="actions">
             <button class="btn" data-copy="#${el.id}">${dict.btnCopy}</button>
-            ${item.status!=='sold' ? `<a class="btn primary" href="mailto:?subject=${encodeURIComponent('Inquiry: '+item.title)}&body=${encodeURIComponent(location.href.split('#')[0]+'#'+el.id)}">${dict.btnWant}</a>` : `<button class="btn" disabled>${dict.soldMark}</button>`}
+            <a class="btn primary" href="mailto:?subject=${encodeURIComponent('Inquiry: '+item.title)}&body=${encodeURIComponent(location.href.split('#')[0]+'#'+el.id)}">${dict.btnWant}</a>
+            ${item.link? `<a class="btn link" href="${item.link}" target="_blank">${dict.btnLink}</a>`:''}
           </div>
-        </div>
-      `;
+        </div>`;
 
-      el.querySelector('[data-copy]')?.addEventListener('click', (e)=>{
-        const hash = e.currentTarget.getAttribute('data-copy');
-        const url = location.href.split('#')[0] + hash;
-        navigator.clipboard?.writeText(url).then(()=>{
-          e.currentTarget.textContent = '✔';
-          setTimeout(()=> e.currentTarget.textContent = dict.btnCopy, 900);
+      // 缩略图条
+      if(Array.isArray(item.gallery) && item.gallery.length){
+        const bar=document.createElement('div'); bar.className='thumbs';
+        item.gallery.forEach((src,idx)=>{
+          const t=document.createElement('img'); t.src=src; t.alt=item.title+'-'+(idx+1);
+          if(src===mainImg) t.classList.add('active');
+          t.addEventListener('click',()=>{
+            el.querySelector('.thumb').src=src;
+            bar.querySelectorAll('img').forEach(i=>i.classList.remove('active'));
+            t.classList.add('active');
+          });
+          bar.appendChild(t);
         });
+        el.querySelector('.content').insertBefore(bar, el.querySelector('.actions'));
+      }
+
+      // 复制直达链接
+      el.querySelector('[data-copy]').addEventListener('click',e=>{
+        const h=e.currentTarget.getAttribute('data-copy'); const url=location.href.split('#')[0]+h;
+        navigator.clipboard?.writeText(url).then(()=>{e.currentTarget.textContent='✔'; setTimeout(()=>e.currentTarget.textContent=dict.btnCopy,900)});
       });
+
+      // 主图打开 lightbox
+      el.querySelector('.thumb').addEventListener('click',()=>{
+        const list = (Array.isArray(item.gallery)&&item.gallery.length)? item.gallery : [mainImg];
+        const current = el.querySelector('.thumb').getAttribute('src');
+        const startIndex = Math.max(0, list.indexOf(current));
+        openLB(list, startIndex);
+      });
+
       return el;
     }
 
     function render(data){
-      const grid = byId('grid'); grid.innerHTML='';
-
-      const q = byId('q').value.trim().toLowerCase();
-      const cat = byId('cat').value; const status = byId('status').value; const sort = byId('sort').value; const currencySel = byId('currencySel').value || seller.defaultCurrency;
-      const lang = document.documentElement.dataset.lang || 'zh';
-      const dict = I18N[lang] || I18N.zh;
-
-      // 顶部多语言文本替换
-      $$('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(I18N[lang][k]) el.textContent = I18N[lang][k]; });
-      byId('q').placeholder = lang==='zh'? '🔎 搜索标题/描述/分类…' : lang==='en'? '🔎 Search title/desc/category…' : '🔎 Cerca titolo/descrizione/categoria…';
-
-      let items = data.items.filter(x=> !!x && x.title);
-      if(q){ items = items.filter(x=> [x.title, x.desc, x.category].filter(Boolean).join(' ').toLowerCase().includes(q)); }
-      if(cat){ items = items.filter(x=> x.category === cat); }
-      if(status){ items = items.filter(x=> (x.status||'available') === status); }
-      items = sortItems(items, sort);
-
-      items.forEach(it=> grid.appendChild(createCard(it, lang, currencySel)));
-
-      byId('count').textContent = `${items.length} / ${data.items.length}`;
-
-      // 分类 chips + 下拉
-      const cats = unique(data.items.map(x=>x.category).filter(Boolean));
-      const chips = byId('chips'); chips.innerHTML = cats.map(c=>`<button class="chip" data-c="${c}">${c}</button>`).join('');
-      chips.querySelectorAll('button').forEach(btn=> btn.addEventListener('click', ()=>{ byId('cat').value = btn.dataset.c; render(data); }));
-
-      // 分类下拉填充（仅首次追加新项目）
-      const catSel = byId('cat');
-      const existing = new Set(Array.from(catSel.options).map(o=>o.value));
-      cats.forEach(c=>{ if(!existing.has(c)){ const o=document.createElement('option'); o.value=c; o.textContent=c; catSel.appendChild(o);} });
-
-      // 联系方式（支持 HTML）
-      byId('contact').innerHTML = seller.contact || '';
+      const grid=byId('grid'); grid.innerHTML='';
+      (data.items||[]).forEach(it=> grid.appendChild(createCard(it)));
+      byId('count').textContent = `${data.items.length} items`;
+      byId('contact').innerHTML = seller.contact;
+      if(location.hash){ document.querySelector(location.hash)?.scrollIntoView({behavior:'smooth',block:'center'}); }
     }
 
-    function setup(data){
-      // 语言切换
-      const setLang = (lang)=>{ document.documentElement.dataset.lang = lang; $$('.lang button').forEach(b=> b.classList.toggle('active', b.dataset.lang===lang)); render(data); };
-      $$('.lang button').forEach(b=> b.addEventListener('click', ()=> setLang(b.dataset.lang)));
-      setLang('zh');
-
-      ['q','cat','sort','status','currencySel'].forEach(id=> byId(id).addEventListener('input', ()=> render(data)));
-      render(data);
-
-      if(location.hash){ const anchor = document.querySelector(location.hash); anchor?.scrollIntoView({behavior:'smooth', block:'center'}); }
-    }
+    function setup(data){ render(data); }
   </script>
 
-  <!-- ============ 替换这里的数据即可上架物品（示例含原价/现价/节省） ============ -->
   <script>
     window.APP_DATA = {
       items: [
         {
-          id: 'JD1_mirror',
-          title: "全身镜",
-          desc: '128GB，轻度使用，无明显划痕，附原装充电器与保护壳。/ Lightly used, with charger & case. / Usato leggero, con caricatore e cover.',
-          price: 430,
-          originalPrice: 650,
+          id: 'jd1_mirror',
+          title: "圆角设计感全身镜",
+          desc: '53 x 163 cm, 可悬挂于墙壁或落地，适合客厅更衣室，金色，',
+          price: 137.59,
+          originalPrice: 38,
           currency: 'EUR',
-          category: '电子产品',
+          category: '家电',
           condition: '九成新',
-          location: 'Milano - Città Studi',
-          img: "jd/jd1_mirror/id1_2.jpg",
+          location: 'Como/Milano',
+          img: 'assets/jd/jd1_mirror/id1_3.png',
+          gallery: [
+            'assets/jd/jd1_mirror/id1_1.png',
+            'assets/jd/jd1_mirror/id1_2.jpg',
+            'assets/jd/jd1_mirror/id1_3.png'
+          ],
           date: '2025-08-24',
-          status: 'available'
+          status: 'available',
+          link: 'https://www.amazon.it/dp/B0C58ZJV6R?ref=ppx_yo2ov_dt_b_fed_asin_title'
         },
         {
           id: 'SKU-002',
@@ -335,7 +189,8 @@
           location: 'Milano - Lambrate',
           img: 'https://images.unsplash.com/photo-1556912998-c57cc6b63cd7?q=80&w=1200&auto=format&fit=crop',
           date: '2025-08-20',
-          status: 'reserved'
+          status: 'reserved',
+          link: 'https://www.philips.com'
         },
         {
           id: 'SKU-003',
@@ -346,9 +201,15 @@
           category: '家具',
           condition: '九成新',
           location: 'Milano - Porta Romana',
-          img: 'https://images.unsplash.com/photo-1470274038469-958113db2384?q=80&w=1200&auto=format&fit=crop',
+          img: 'assets/jd/jd1_mirror/id1_2.jpg',
+          gallery: [
+            'assets/jd/jd1_mirror/id1_1.jpg',
+            'assets/jd/jd1_mirror/id1_2.jpg',
+            'assets/jd/jd1_mirror/id1_3.jpg'
+          ],
           date: '2025-08-18',
-          status: 'sold'
+          status: 'sold',
+          link: 'https://www.ikea.com'
         }
       ]
     };
