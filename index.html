@@ -71,7 +71,7 @@
       <!-- 新增：中英双语欢迎语 + 到 10/03 的倒计时 -->
       <div class="notice" aria-live="polite">
         <div class="notice-text">
-          <strong>Hi～终于等到你！🌟</strong> 欢迎光临Lina的二手杂货铺｜毕业出 家具·学习用品·衣物 等，希望你能挑选到自己喜欢且有缘的物品。营业至📅十月三日 <br>
+          <strong>Hi～终于等到你！🌟</strong> 欢迎光临Lina的二手杂货铺｜毕业出 家具·学习用品·衣物等<br>希望你能挑选到自己喜欢且有缘的物品~📅营业至十月三日 <br>
           <em>Welcome!</em> Lina’s preloved shop — furniture, study supplies & clothing. First come, first served. 
         </div>
         <div class="notice-timer">
@@ -96,7 +96,7 @@
   <script>
     const I18N={ zh:{btnCopy:'复制链接',btnWant:'我想要',btnLink:'参考链接',priceOld:'原价',priceNow:'现价',priceSave:'节省'}, en:{btnCopy:'Copy link',btnWant:'I want it',btnLink:'Reference link',priceOld:'Original',priceNow:'Now',priceSave:'Save'}, it:{btnCopy:'Copia link',btnWant:'Mi interessa',btnLink:'Link di riferimento',priceOld:'Prezzo originale',priceNow:'Prezzo attuale',priceSave:'Risparmi'} };
     const LANG='zh';
-    const seller={ contact:'WeChat: your_wechat · Email: meii.della.serena@gmail.com', defaultCurrency:'EUR' };
+    const seller={ contact:'WeChat: PhD_MissMei · Email: melina.di.zeta@gmail.com', defaultCurrency:'EUR' };
     const $=s=>document.querySelector(s); const byId=id=>document.getElementById(id);
     function fmt(n,c){try{return new Intl.NumberFormat(undefined,{style:'currency',currency:c,maximumFractionDigits:n%1?2:0}).format(n)}catch(e){return `${c} ${n}`}}
     function saveCalc(it){const o=Number(it.originalPrice||0),p=Number(it.price||0);if(!o||!p||p>=o)return null;const s=o-p;const r=Math.round(s/o*100);return{s,pct:r}}
