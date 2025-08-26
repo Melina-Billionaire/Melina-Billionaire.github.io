@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GitHub Pages 发布教学 | Step by Step</title>
+</head>
+<body style="font-family: system-ui, sans-serif; padding: 20px; line-height:1.6; max-width: 800px; margin:auto;">
+  <h1>一步一步把网页发布到 GitHub Pages</h1>
+
+  <h2>📌 第 1 步：准备文件</h2>
+  <ul>
+    <li>把网页代码保存成一个文件，命名 <code>index.html</code>。</li>
+    <li>如果有图片，可以：
+      <ul>
+        <li>放在同一个文件夹（例如 <code>assets/</code>），并在代码里引用 <code>assets/xxx.jpg</code>。</li>
+        <li>或使用公开的在线图片链接。</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h2>📌 第 2 步：新建仓库</h2>
+  <ul>
+    <li>登录 <a href="https://github.com" target="_blank">GitHub</a>。</li>
+    <li>右上角点击 <code>+</code> → <b>New repository</b>（如你截图所示）。</li>
+    <li>仓库名随意，例如 <code>secondhand-listings</code>。</li>
+    <li>选择 <b>Public</b> → 点击 <b>Create repository</b>。</li>
+  </ul>
+
+  <h2>📌 第 3 步：上传文件</h2>
+  <ul>
+    <li>进入新仓库主页。</li>
+    <li>点击 <b>Add file</b> → <b>Upload files</b>。</li>
+    <li>拖入 <code>index.html</code>（和图片文件夹，如有）。</li>
+    <li>滚动到底部，点击 <b>Commit changes</b>。</li>
+  </ul>
+
+  <h2>📌 第 4 步：开启 GitHub Pages</h2>
+  <ul>
+    <li>进入仓库 → 顶部点击 <b>Settings</b>。</li>
+    <li>左侧菜单选择 <b>Pages</b>。</li>
+    <li>在 <b>Build and deployment</b> 区域：
+      <ul>
+        <li><b>Source</b> → <code>Deploy from a branch</code></li>
+        <li><b>Branch</b> → <code>main</code></li>
+        <li><b>Folder</b> → <code>/ (root)</code></li>
+      </ul>
+    </li>
+    <li>点击 <b>Save</b>，等待 1–2 分钟。</li>
+  </ul>
+
+  <h2>📌 第 5 步：访问网页</h2>
+  <ul>
+    <li>几分钟后会自动生成网址：</li>
+    <li><code>https://你的用户名.github.io/secondhand-listings/</code></li>
+    <li>打开即可看到你的二手物品展示网页。</li>
+  </ul>
+
+  <p><b>✅ 提示：</b>以后只要更新 <code>index.html</code> 并上传，网页会自动刷新，无需再次设置。</p>
+</body>
+</html>
