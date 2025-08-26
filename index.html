@@ -59,7 +59,7 @@
     <header>
       <div class="title">
         <h1>Linaの无忧杂货铺 | Second‑hand Listings | Elenco usato</h1>
-        <span class="subtitle">不定期更新 · 毕业出二手 · 先到先得 · 分类筛选 · 📅 营业至 03/Oct </span>
+        <span class="subtitle">不定期更新 · 毕业出二手 · 先到先得 · 分类筛选 <br>The author is currently busy (and a bit lazy 🙈) preparing for her PhD defense, so not everything is in bilingual format. If your language is English (or your mother tongue), please kindly use Google Translator on the web version. Thank you! 😅</span>
       </div>
       <div class="toolbar"><span id="count">0 items</span> · <span id="contact"></span></div>
       <div class="filter">
@@ -96,7 +96,7 @@
   <script>
     const I18N={ zh:{btnCopy:'复制链接',btnWant:'我想要',btnLink:'参考链接',priceOld:'原价',priceNow:'现价',priceSave:'节省'}, en:{btnCopy:'Copy link',btnWant:'I want it',btnLink:'Reference link',priceOld:'Original',priceNow:'Now',priceSave:'Save'}, it:{btnCopy:'Copia link',btnWant:'Mi interessa',btnLink:'Link di riferimento',priceOld:'Prezzo originale',priceNow:'Prezzo attuale',priceSave:'Risparmi'} };
     const LANG='zh';
-    const seller={ contact:'WeChat: PhD_MissMei · Email: melina.di.zeta@gmail.com', defaultCurrency:'EUR' };
+    const seller={ contact:'💚 WeChat: PhD_MissMei · 📮 Email: melina.di.zeta@gmail.com', defaultCurrency:'EUR' };
     const $=s=>document.querySelector(s); const byId=id=>document.getElementById(id);
     function fmt(n,c){try{return new Intl.NumberFormat(undefined,{style:'currency',currency:c,maximumFractionDigits:n%1?2:0}).format(n)}catch(e){return `${c} ${n}`}}
     function saveCalc(it){const o=Number(it.originalPrice||0),p=Number(it.price||0);if(!o||!p||p>=o)return null;const s=o-p;const r=Math.round(s/o*100);return{s,pct:r}}
