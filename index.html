@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Linaの无忧杂货铺 | Second‑hand Listings | Elenco usato</title>
-  <meta name="description" content="Hi～终于等到你，欢迎光临Lina的二手杂货铺，毕业出家具·学习用品·衣物等，希望你能挑选到自己喜欢且有缘的物品。不定期更新，先到先得，营业到十月初，倒计时" />
+  <meta name="description" content="Hi～终于等到你，欢迎光临Lina的二手杂货铺｜毕业出 家具·学习用品·衣物 等，希望你能挑选到自己喜欢且有缘的物品。不定期更新，先到先得，营业至 10/03；Welcome to Lina’s preloved shop — furniture, study supplies, clothing; open till Oct 3." />
   <style>
     :root { --bg:#0b0c10; --card:#111218; --muted:#8b90a6; --fg:#eaeaf2; --border:#1a1c24; --chip:#1b1d26; --brand:#7c9cff; --ok:#8bf0b8; --warn:#ffd2d6; }
     html,body{height:100%}
@@ -46,6 +46,13 @@
     .lb-nav{position:fixed;inset:0;display:flex;align-items:center;justify-content:space-between;pointer-events:none}
     .lb-btn{pointer-events:auto;user-select:none;cursor:pointer;background:rgba(255,255,255,.12);border:1px solid #555;color:#fff;padding:10px 14px;border-radius:12px;margin:0 14px;font-weight:800}
     .lb-close{position:fixed;top:16px;right:16px}
+    /* 新增：公告 + 倒计时 */
+    .notice{display:flex;gap:12px;justify-content:space-between;align-items:center;border:1px solid var(--border);background:#10121a;border-radius:12px;padding:10px 12px;margin-top:8px}
+    .notice-text{font-size:13.5px;color:#cfd3e4}
+    .notice-timer{text-align:right;min-width:220px}
+    .notice-timer small{display:block;color:var(--muted);margin-bottom:2px}
+    #countdown{font-weight:900;font-size:14.5px;color:var(--ok);letter-spacing:.3px}
+    @media(max-width:640px){.notice{flex-direction:column;align-items:flex-start}.notice-timer{text-align:left;min-width:auto;width:100%}}
   </style>
 </head>
 <body>
