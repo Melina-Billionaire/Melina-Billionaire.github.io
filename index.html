@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>我的二手清单 | Second‑hand Listings | Elenco usato</title>
-  <meta name="description" content="二手物品展示页：支持多图（主图+gallery）、价格对比（原价/现价/节省）、复制直达链接、参考购买链接。" />
+  <meta name="description" content="二手物品展示页：价格对比（原价/现价/节省）、复制直达链接、参考购买链接。" />
   <style>
     :root { --bg:#0b0c10; --card:#111218; --muted:#8b90a6; --fg:#eaeaf2; --border:#1a1c24; --chip:#1b1d26; --brand:#7c9cff; }
     html,body{height:100%}
@@ -73,7 +73,7 @@
   </div>
 
   <script>
-    const I18N={ zh:{btnCopy:'CopyLink',btnWant:'我想要/I WANT',btnLink:'参考链接Link🔗',priceOld:'原价',priceNow:'现价',priceSave:'节省'}, en:{btnCopy:'Copy link',btnWant:'I want it',btnLink:'Reference link',priceOld:'Original',priceNow:'Now',priceSave:'Save'}, it:{btnCopy:'Copia link',btnWant:'Mi interessa',btnLink:'Link di riferimento',priceOld:'Prezzo originale',priceNow:'Prezzo attuale',priceSave:'Risparmi'} };
+    const I18N={ zh:{btnCopy:'CopyLink',btnWant:'我想要',btnLink:'参考链接Link🔗',priceOld:'原价',priceNow:'现价',priceSave:'节省'}, en:{btnCopy:'Copy link',btnWant:'I want it',btnLink:'Reference link',priceOld:'Original',priceNow:'Now',priceSave:'Save'}, it:{btnCopy:'Copia link',btnWant:'Mi interessa',btnLink:'Link di riferimento',priceOld:'Prezzo originale',priceNow:'Prezzo attuale',priceSave:'Risparmi'} };
     const LANG='zh';
     const seller={ contact:'WeChat: your_wechat · Email: meii.della.serena@gmail.com', defaultCurrency:'EUR' };
     const $=s=>document.querySelector(s); const byId=id=>document.getElementById(id);
@@ -211,7 +211,7 @@
           img: 'assets/jd/jd3_stand/jd3_1.png',
           gallery: [
             'assets/jd/jd3_stand/jd3_1.png',
-            'assets/jd/jd3_stand/jd3_2.png',
+            'assets/jd/jd3_stand/jd3_2.png'
           ],
           date: '2025-08-24',
           status: 'available',
@@ -230,7 +230,7 @@
           img: 'assets/jd/jd4_ac/jd4_1.png',
           gallery: [
             'assets/jd/jd4_ac/jd4_1.png',
-            'assets/jd/jd4_ac/jd4_2.png',
+            'assets/jd/jd4_ac/jd4_2.png'
           ],
           date: '2025-08-24',
           status: 'available',
@@ -240,7 +240,7 @@
           id: 'jd5_chair',
           title: 'SIHOO 办公椅，人体工学椅',
           desc: '360°旋转，可折叠和翻转扶手，透气网布舒适腰部支撑办公椅，灰色尼龙万向轮。62D x 63W x 99.5H 厘米',
-          price: 25,
+          price: 35,
           originalPrice: 145,
           currency: 'EUR',
           category: '家电',
@@ -249,7 +249,7 @@
           img: 'assets/jd/jd5_chair/jd5_1.jpg',
           gallery: [
             'assets/jd/jd5_chair/jd5_1.jpg',
-            'assets/jd/jd5_chair/jd5_2.png',
+            'assets/jd/jd5_chair/jd5_2.png'
           ],
           date: '2025-08-24',
           status: 'available',
@@ -259,13 +259,72 @@
           id: 'jd6_airfryer',
           title: 'Involly 15L 空气炸锅',
           desc: '18 合 1 三重结构热风烤箱，迷你披萨烤箱，不锈钢电烤箱，快速烹饪，少油，4 个配件和 26 种食谱，1600W',
-          price: 18,
-          originalPrice: 50,
+          price: 58.99,
+          originalPrice: 158.99,
           currency: 'EUR',
           category: '家电',
           condition: '九成新',
           location: 'Como/Milano',
           img: 'assets/jd/jd6_airfryer/jd6_1.png',
+          date: '2025-08-24',
+          status: 'available',
+          link: 'https://www.amazon.it/dp/B0BQMHXV96?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1'
+        },
+        {
+          id: 'jd7_pat',
+          title: '毛茸茸客厅地毯',
+          desc: '135 x 185 cm, 长绒地毯，现代客厅卧室地毯，防滑柔软蓬松（灰白色',
+          price: 8.99,
+          originalPrice: 32.99,
+          currency: 'EUR',
+          category: '家电',
+          condition: '九成新',
+          location: 'Como/Milano',
+          img: 'assets/jd/jd7_pat/jd7_1.png',
+          gallery: [
+            'assets/jd/jd7_pat/jd7_2.png',
+            'assets/jd/jd7_pat/jd7_3.png',
+            'assets/jd/jd7_pat/jd7_1.png'
+          ],
+          date: '2025-08-24',
+          status: 'available',
+          link: 'https://www.amazon.it/dp/B08HMVWZ93?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1'
+        },
+        {
+          id: 'jd8_pot',
+          title: 'KASANOVA 黄金8件套红色炊具',
+          desc: '适合全家使用的完美烹饪套装：20 厘米和 28 厘米煎锅、18 厘米和 24 厘米炖锅，以及一个 28 厘米带盖深煎锅。亮红色设计，不含 PFOA 的不粘涂层，以及适用于电磁炉和所有炉灶的锅底。,
+          price: 30,
+          originalPrice: 69.90,
+          currency: 'EUR',
+          category: '家电',
+          condition: '九成新',
+          location: 'Como/Milano',
+          img: 'assets/jd/jd7_pat/jd7_1.png',
+          gallery: [
+            'assets/jd/jd7_pat/jd7_2.png',
+            'assets/jd/jd7_pat/jd7_3.png',
+            'assets/jd/jd7_pat/jd7_1.png'
+          ],
+          date: '2025-08-24',
+          status: 'available',
+          link: 'https://www.amazon.it/dp/B0BQMHXV96?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1'
+        },
+          id: 'jd9_lamp',
+          title: 'KASANOVA 黄金8件套红色炊具',
+          desc: '适合全家使用的完美烹饪套装：20 厘米和 28 厘米煎锅、18 厘米和 24 厘米炖锅，以及一个 28 厘米带盖深煎锅。亮红色设计，不含 PFOA 的不粘涂层，以及适用于电磁炉和所有炉灶的锅底。,
+          price: 30,
+          originalPrice: 69.90,
+          currency: 'EUR',
+          category: '家电',
+          condition: '九成新',
+          location: 'Como/Milano',
+          img: 'assets/jd/jd7_pat/jd7_1.png',
+          gallery: [
+            'assets/jd/jd7_pat/jd7_2.png',
+            'assets/jd/jd7_pat/jd7_3.png',
+            'assets/jd/jd7_pat/jd7_1.png'
+          ],
           date: '2025-08-24',
           status: 'available',
           link: 'https://www.amazon.it/dp/B0BQMHXV96?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1'
