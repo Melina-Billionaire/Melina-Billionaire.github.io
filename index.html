@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Linaの无忧杂货铺 | Second‑hand Listings | Elenco usato</title>
-  <meta name="description" content="Hi～终于等到你，欢迎光临Lina的二手杂货铺｜毕业出 家具·学习用品·衣物 等，希望你能挑选到自己喜欢且有缘的物品。不定期更新，先到先得，营业至 10/03；🇬🇧 Hi~ finally, here you are! Welcome to Lina’s second-hand shop ｜ I’m selling furniture, study supplies, clothes, and more as I graduate. Hope you’ll find something you like and feel a connection with. Updated from time to time, first come first served. Open until 10/03." />
+  <title>我的二手清单 | Second‑hand Listings | Elenco usato</title>
+  <!-- 改为中英双语描述（说明 + 截止日期），倒计时在页面可见处动态显示 -->
+  <meta name="description" content="Hi～欢迎光临 Lina 的二手杂货铺｜毕业出 家具·学习用品·衣物 等，先到先得，营业至 10/03；Welcome to Lina’s preloved shop — furniture, study supplies, clothing; open till Oct 3." />
   <style>
     :root { --bg:#0b0c10; --card:#111218; --muted:#8b90a6; --fg:#eaeaf2; --border:#1a1c24; --chip:#1b1d26; --brand:#7c9cff; --ok:#8bf0b8; --warn:#ffd2d6; }
-    html,body{height:100%}
     body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.65 system-ui,-apple-system,Segoe UI,Roboto,'PingFang SC','Noto Sans CJK SC',Arial}
     .container{max-width:1160px;margin:0 auto;padding:28px 16px 96px}
     header{display:grid;gap:10px;margin-bottom:16px}
@@ -15,6 +15,8 @@
     .title h1{margin:0;font-size:28px;letter-spacing:.2px}
     .subtitle{color:var(--muted);font-size:12.5px}
     .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px;color:var(--muted);font-size:12px}
+    .filter{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
+    select{background:#151723;color:var(--fg);border:1px solid var(--border);border-radius:8px;padding:4px 8px;font-size:13px}
     .grid{display:grid;gap:16px;grid-template-columns:repeat(1,minmax(0,1fr));margin-top:16px}
     @media(min-width:640px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(min-width:1040px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -39,7 +41,6 @@
     .thumbs img.active{outline:2px solid var(--brand);opacity:1}
     footer{margin-top:18px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
     .count{color:#a6add0}
-    /* Lightbox */
     .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.86);display:none;align-items:center;justify-content:center;z-index:9999}
     .lightbox.open{display:flex}
     .lightbox img{max-width:92vw;max-height:86vh;object-fit:contain}
@@ -60,15 +61,31 @@
     <header>
       <div class="title">
         <h1>二手物品清单</h1>
-        <span class="subtitle">支持多图（主图 + 预览） · 原价/现价/节省 对比 · 参考链接</span>
+        <span class="subtitle">支持多图 · 价格对比 · 分类筛选 · 参考链接</span>
       </div>
       <div class="toolbar"><span id="count">0 items</span> · <span id="contact"></span></div>
+      <div class="filter">
+        <label for="categoryFilter">分类：</label>
+        <select id="categoryFilter">
+          <option value="all">全部</option>
+        </select>
+      </div>
+      <!-- 新增：中英双语欢迎语 + 到 10/03 的倒计时 -->
+      <div class="notice" aria-live="polite">
+        <div class="notice-text">
+          <strong>Hi～终于等到你！</strong> 欢迎光临 Lina 的二手杂货铺：毕业出 家具 / 学习用品 / 衣物 等，先到先得。<br>
+          <em>Welcome!</em> Lina’s preloved shop — furniture, study supplies & clothing. First come, first served.
+        </div>
+        <div class="notice-timer">
+          <small>距 10/03 截止 · Closes by Oct 3</small>
+          <div id="countdown">-- 天 --:--:-- / --d --:--:--</div>
+        </div>
+      </div>
     </header>
 
     <section class="grid" id="grid"></section>
   </div>
 
-  <!-- Lightbox 容器 -->
   <div class="lightbox" id="lightbox">
     <button class="lb-btn lb-close" id="lbClose">✕</button>
     <img id="lbImg" alt="preview" />
@@ -79,10 +96,9 @@
   </div>
 
   <script>
-    // 多语言字典（界面用语）
     const I18N={ zh:{btnCopy:'复制链接',btnWant:'我想要',btnLink:'参考链接',priceOld:'原价',priceNow:'现价',priceSave:'节省'}, en:{btnCopy:'Copy link',btnWant:'I want it',btnLink:'Reference link',priceOld:'Original',priceNow:'Now',priceSave:'Save'}, it:{btnCopy:'Copia link',btnWant:'Mi interessa',btnLink:'Link di riferimento',priceOld:'Prezzo originale',priceNow:'Prezzo attuale',priceSave:'Risparmi'} };
     const LANG='zh';
-    const seller={ contact:'WeChat: PhD_MissMei · Email: melina.di.zeta@gmail.com', defaultCurrency:'EUR' };
+    const seller={ contact:'WeChat: your_wechat · Email: meii.della.serena@gmail.com', defaultCurrency:'EUR' };
     const $=s=>document.querySelector(s); const byId=id=>document.getElementById(id);
     function fmt(n,c){try{return new Intl.NumberFormat(undefined,{style:'currency',currency:c,maximumFractionDigits:n%1?2:0}).format(n)}catch(e){return `${c} ${n}`}}
     function saveCalc(it){const o=Number(it.originalPrice||0),p=Number(it.price||0);if(!o||!p||p>=o)return null;const s=o-p;const r=Math.round(s/o*100);return{s,pct:r}}
@@ -121,14 +137,12 @@
           </div>
         </div>`;
 
-      // 元信息 chips
       const meta=el.querySelector('.meta');
       if(item.category) meta.appendChild(chip(item.category));
       if(item.condition) meta.appendChild(chip(item.condition));
       if(item.location) meta.appendChild(chip(item.location));
       if(item.status) meta.appendChild(chip(item.status));
 
-      // 缩略图条（gallery）
       if(Array.isArray(item.gallery) && item.gallery.length){
         const bar=el.querySelector('.thumbs');
         const cover=el.querySelector('.thumb');
@@ -144,13 +158,11 @@
         });
       }
 
-      // 复制直达链接
       el.querySelector('[data-copy]').addEventListener('click',e=>{
         const h=e.currentTarget.getAttribute('data-copy'); const url=location.href.split('#')[0]+h;
         navigator.clipboard?.writeText(url).then(()=>{e.currentTarget.textContent='✔'; setTimeout(()=>e.currentTarget.textContent=dict.btnCopy,900)});
       });
 
-      // 主图打开 lightbox
       el.querySelector('.thumb').addEventListener('click',()=>{
         const list = (Array.isArray(item.gallery)&&item.gallery.length)? item.gallery : [mainImg];
         const current = el.querySelector('.thumb').getAttribute('src');
@@ -161,328 +173,51 @@
       return el;
     }
 
-    function render(data){
+    function render(data,filterCat='all'){
       const grid=byId('grid'); grid.innerHTML='';
-      (data.items||[]).forEach(it=> grid.appendChild(createCard(it)));
-      byId('count').textContent = `${data.items.length} items`;
+      const items=data.items.filter(it=> filterCat==='all' || it.category===filterCat);
+      items.forEach(it=> grid.appendChild(createCard(it)));
+      byId('count').textContent = `${items.length} items`;
       byId('contact').innerHTML = seller.contact;
       if(location.hash){ document.querySelector(location.hash)?.scrollIntoView({behavior:'smooth',block:'center'}); }
     }
 
-    function setup(data){ render(data); }
+    function setup(data){
+      if(!data || !data.items){ console.error('缺少数据 window.APP_DATA'); return; }
+      const categories=[...new Set(data.items.map(it=>it.category).filter(Boolean))];
+      const sel=byId('categoryFilter');
+      categories.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+      sel.addEventListener('change',()=>render(data,sel.value));
+      render(data);
+    }
+
+    // 新增：到 2025-10-03 的倒计时（以浏览器本地时区计算）
+    function startCountdown(){
+      const el=byId('countdown'); if(!el) return;
+      const deadline=new Date('2025-10-03T23:59:59'); // 本地时间 10/03 23:59:59
+      function pad(n){return String(n).padStart(2,'0');}
+      function tick(){
+        const now=new Date();
+        const ms=deadline-now;
+        if(ms<=0){ el.textContent='已结束 / Closed'; el.style.color='#ff9aa2'; clearInterval(t); return; }
+        const sec=Math.floor(ms/1000)%60;
+        const min=Math.floor(ms/1000/60)%60;
+        const hr =Math.floor(ms/1000/60/60)%24;
+        const day=Math.floor(ms/1000/60/60/24);
+        el.textContent=`${day} 天 ${pad(hr)}:${pad(min)}:${pad(sec)} / ${day}d ${pad(hr)}:${pad(min)}:${pad(sec)}`;
+      }
+      tick();
+      const t=setInterval(tick,1000);
+    }
+    document.addEventListener('DOMContentLoaded', startCountdown);
   </script>
 
   <script>
-    // ======= 你的数据（已修正语法 & 易读排版） =======
-    window.APP_DATA = {
-      items: [
-        {
-          id: 'jd1_mirror',
-          title: '圆角设计感全身镜',
-          desc: '53 × 163 cm，可悬挂/落地，适合客厅与更衣室，金色',
-          price: 38,
-          originalPrice: 137.59,
-          currency: 'EUR',
-          category: '家具',
-          condition: '九成新',
-          location: 'Como/Milano',
-          img: 'assets/jd/jd1_mirror/jd1_3.png',
-          gallery: [
-            'assets/jd/jd1_mirror/jd1_2.png',
-            'assets/jd/jd1_mirror/jd1_3.png',
-            'assets/jd/jd1_mirror/jd1_1.png'
-          ],
-          date: '2025-08-24',
-          status: 'available',
-          link: 'https://www.amazon.it/dp/B0C58ZJV6R?ref=ppx_yo2ov_dt_b_fed_asin_title'
-        },
-        {
-          id: 'jd2_mattress',
-          title: '双人记忆充气床垫 160×200×24 cm（硬度 8.5/10）',
-          desc: '七区承托设计，贴合脊柱曲线，休息时保持理想姿势',
-          price: 25,
-          originalPrice: 215,
-          currency: 'EUR',
-          category: '家具',
-          condition: '九成新',
-          location: 'Como/Milano',
-          img: 'assets/jd/jd2_mattress/jd2_1.jpg',
-          gallery: [
-            'assets/jd/jd2_mattress/jd2_2.png',
-            'assets/jd/jd2_mattress/jd2_3.png',
-            'assets/jd/jd2_mattress/jd2_1.jpg'
-          ],
-          date: '2025-08-24',
-          status: 'available',
-          link: 'https://www.amazon.it/dp/B07Y8C89JJ?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1'
-        },
-        {
-          id: 'jd3_stand',
-          title: '重型旋转桌面支架（双屏，气弹簧）',
-          desc: '支持 22–32 英寸，VESA ≤100×100mm，单臂承重 12 kg',
-          price: 18,
-          originalPrice: 50,
-          currency: 'EUR',
-          category: '家电',
-          condition: '九成新',
-          location: 'Como/Milano',
-          img: 'assets/jd/jd3_stand/jd3_1.png',
-          gallery: [
-            'assets/jd/jd3_stand/jd3_1.png',
-            'assets/jd/jd3_stand/jd3_2.png'
-          ],
-          date: '2025-08-24',
-          status: 'available',
-          link: 'https://www.amazon.it/dp/B097Y1R66K?ref=ppx_yo2ov_dt_b_fed_asin_title'
-        },
-        {
-          id: 'jd4_ac',
-          title: '德龙空调 · DeLonghi Pinguino PAC N81',
-          desc: '一体式移动空调，适合卧室/客厅',
-          price: 188.88,
-          originalPrice: 480,
-          currency: 'EUR',
-          category: '家电',
-          condition: '八成新',
-          location: 'Como/Milano',
-          img: 'assets/jd/jd4_ac/jd4_1.png',
-          gallery: [
-            'assets/jd/jd4_ac/jd4_1.png',
-            'assets/jd/jd4_ac/jd4_2.png'
-          ],
-          date: '2025-08-24',
-          status: 'available',
-          link: 'https://www.amazon.it/-/en/DeLonghi-PACN77ECO-Conditioner-Installation-Dehumidifier/dp/B09ZLB8C5J'
-        },
-        {
-          id: 'jd5_chair',
-          title: 'SIHOO 人体工学办公椅',
-          desc: '可旋转/翻转扶手，透气网布，腰部支撑，62×63×99.5 cm',
-          price: 35,
-          originalPrice: 145,
-          currency: 'EUR',
-          category: '家电',
-          condition: '八成新',
-          location: 'Como/Milano',
-          img: 'assets/jd/jd5_chair/jd5_1.jpg',
-          gallery: [
-            'assets/jd/jd5_chair/jd5_1.jpg',
-            'assets/jd/jd5_chair/jd5_2.png'
-          ],
-          date: '2025-08-24',
-          status: 'available',
-          link: 'https://www.amazon.it/dp/B0899LSG8X?ref=ppx_yo2ov_dt_b_fed_asin_title'
-        },
-        {
-          id: 'jd6_airfryer',
-          title: 'Involly 15L 空气炸锅',
-          desc: '18 合 1 热风烤箱，不锈钢机身，1600W，含 4 配件与 26 份食谱',
-          price: 58.99,
-          originalPrice: 158.99,
-          currency: 'EUR',
-          category: '家电',
-          condition: '九成新',
-          location: 'Como/Milano',
-          img: 'assets/jd/jd6_airfryer/jd6_1.png',
-          date: '2025-08-24',
-          status: 'available',
-          link: 'https://www.amazon.it/dp/B0BQMHXV96?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1'
-        },
-        {
-          id: 'jd7_pat',
-          title: '毛茸茸客厅地毯 135×185 cm（灰白）',
-          desc: '长绒、现代风、防滑、柔软蓬松',
-          price: 8.99,
-          originalPrice: 32.99,
-          currency: 'EUR',
-          category: '家居',
-          condition: '九成新',
-          location: 'Como/Milano',
-          img: 'assets/jd/jd7_pat/jd7_1.png',
-          gallery: [
-            'assets/jd/jd7_pat/jd7_2.png',
-            'assets/jd/jd7_pat/jd7_3.png',
-            'assets/jd/jd7_pat/jd7_1.png'
-          ],
-          date: '2025-08-24',
-          status: 'available',
-          link: 'https://www.amazon.it/dp/B08HMVWZ93?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1'
-        },
-        {
-          id: 'jd8_pot',
-          title: 'KASANOVA 黄金 8 件套红色炊具',
-          desc: '套装含 20/28cm 煎锅、18/24cm 炖锅、28cm 深煎锅（带盖）；不含 PFOA；适用于电磁炉及各类炉灶',
-          price: 30,
-          originalPrice: 69.90,
-          currency: 'EUR',
-          category: '家居',
-          condition: '九成新',
-          location: 'Como/Milano',
-          img: 'assets/jd/jd8_pot/jd8_1.png',
-          gallery: [
-            'assets/jd/jd8_pot/jd8_2.png',
-            'assets/jd/jd8_pot/jd8_1.png'
-          ],
-          date: '2025-08-24',
-          status: 'available',
-          link: 'https://www.amazon.it/'
-        },
-        {
-          id: 'jd9_lamp',
-          title: 'IKEA 小台灯',
-          desc: '缝制灯罩如柔软白云，回收聚酯纤维材质，营造温馨氛围',
-          price: 8,
-          originalPrice: 19.95,
-          currency: 'EUR',
-          category: '家居',
-          condition: '九成新',
-          location: 'Como/Milano',
-          img: 'assets/jd/jd9_lamp/jd9_1.png',
-          gallery: [
-            'assets/jd/jd9_lamp/jd9_2.png',
-            'assets/jd/jd9_lamp/jd9_1.png'
-          ],
-          date: '2025-08-24',
-          status: 'available',
-          link: 'https://www.ikea.com/it/it/p/vindkast-lampada-da-tavolo-bianco-20539198/'
-        },
-        {
-          id: 'st1_mouse',
-          title: '罗技 POP 无线鼠标',
-          desc: '可自定义表情、SilentTouch 静音、蓝牙/USB、多设备，Heartbreaker 配色',
-          price: 15,
-          originalPrice: 55.5,
-          currency: 'EUR',
-          category: '学习用品',
-          condition: '九成新',
-          location: 'Como/Milano',
-          img: 'assets/study/st1_mouse/st1_2.png',
-          gallery: [
-            'assets/study/st1_mouse/st1_2.png',
-            'assets/study/st1_mouse/st1_1.png'
-          ],
-          date: '2025-08-24',
-          status: 'available',
-          link: 'https://www.amazon.it/dp/B07W6JNWP8?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1'
-        },
-        {
-          id: 'st2_monitor',
-          title: 'Lenovo L24e‑30 显示器（1️⃣）',
-          desc: '23.8" FHD 1920×1080 · IPS · 4ms · 75Hz · HDMI/VGA · FreeSync',
-          price: 80,
-          originalPrice: 158.99,
-          currency: 'EUR',
-          category: '学习用品',
-          condition: '九成新',
-          location: 'Como/Milano',
-          img: 'assets/study/st2_monitor/st2_1.png',
-          gallery: [
-            'assets/study/st2_monitor/st2_1.png',
-            'assets/study/st2_monitor/st2_2.png'
-          ],
-          date: '2025-08-24',
-          status: 'available',
-          link: 'https://www.amazon.it/-/en/Lenovo-L24e-30-Monitor-1920x1080-Adjustable/dp/B08K96T1Z8/'
-        },
-        {
-          id: 'st2_monitor_2',
-          title: 'Lenovo Q24i‑1L 显示器（2️⃣）',
-          desc: '23.8" FHD · IPS · 窄边框 · FreeSync · 4ms · 75Hz · HDMI/VGA',
-          price: 80,
-          originalPrice: 168.31,
-          currency: 'EUR',
-          category: '学习用品',
-          condition: '九成新',
-          location: 'Como/Milano',
-          img: 'assets/study/st2_monitor/st2_3.png',
-          gallery: [
-            'assets/study/st2_monitor/st2_4.png',
-            'assets/study/st2_monitor/st2_3.png'
-          ],
-          date: '2025-08-24',
-          status: 'available',
-          link: 'https://www.pccomponentes.it/lenovo-q24i-1l-238-led-ips-fullhd-75hz-freesync'
-        },
-        {
-          id: 'st3_lamp2',
-          title: '双光源屏幕护眼灯 💡',
-          desc: '夹式双头护眼 LED 台灯，带定时与记忆功能，学习/显示器适用',
-          price: 12,
-          originalPrice: 45,
-          currency: 'EUR',
-          category: '学习用品',
-          condition: '九成新',
-          location: 'Como/Milano',
-          img: 'assets/study/st3_lamp/st3_2.png',
-          gallery: [
-            'assets/study/st3_lamp/st3_2.png',
-            'assets/study/st3_lamp/st3_1.png'
-          ],
-          date: '2025-08-24',
-          status: 'available',
-          link: 'https://www.amazon.it/dp/B0CKQK9YNQ?ref=ppx_yo2ov_dt_b_fed_asin_title'
-        },
-        {
-          id: 'st4_laptop_stand',
-          title: '可调节垂直笔记本支架',
-          desc: '6061 铝合金 · CNC 精密加工 · 适配至 17" · 通风散热 · 防滑硅胶',
-          price: 5,
-          originalPrice: 15.99,
-          currency: 'EUR',
-          category: '学习用品',
-          condition: '九成新',
-          location: 'Como/Milano',
-          img: 'assets/study/st4_laptop_stand/st4_1.png',
-          gallery: [
-            'assets/study/st4_laptop_stand/st4_2.png',
-            'assets/study/st4_laptop_stand/st4_1.png'
-          ],
-          date: '2025-08-24',
-          status: 'available',
-          link: 'https://www.amazon.it/dp/B0DB5L2G34?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1'
-        },
-        {
-          id: 'st5_charger',
-          title: 'Anker USB‑C 充电器 47W (Nano 3)',
-          desc: '2 口 GaN 快充；适配 iPhone/Galaxy/Pixel/iPad 等（不含线）',
-          price: 5,
-          originalPrice: 19.99,
-          currency: 'EUR',
-          category: '学习用品',
-          condition: '九成新',
-          location: 'Como/Milano',
-          img: 'assets/study/st5_charger/st5_1.png',
-          gallery: [
-            'assets/study/st5_charger/st5_2.png',
-            'assets/study/st5_charger/st5_1.png'
-          ],
-          date: '2025-08-24',
-          status: 'available',
-          link: 'https://www.amazon.it/dp/B0BDKSW8GC?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1'
-        },
-        {
-          id: 'st6_batteries',
-          title: '纽扣电池 CR2032（7 粒装）',
-          desc: 'GP Extra 3V；耐用防漏，存放可达 10 年',
-          price: 3,
-          originalPrice: 10.99,
-          currency: 'EUR',
-          category: '学习用品',
-          condition: '九成新',
-          location: 'Como/Milano',
-          img: 'assets/study/st6_batteries/st6_1.png',
-          gallery: [
-            'assets/study/st6_batteries/st6_2.png',
-            'assets/study/st6_batteries/st6_1.png'
-          ],
-          date: '2025-08-24',
-          status: 'available',
-          link: 'https://www.amazon.it/dp/B07QLZ3DGG?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1'
-        }
-      ]
-    };
-
-    setup(window.APP_DATA);
+    if(window.APP_DATA){
+      setup(window.APP_DATA);
+    } else {
+      console.warn('window.APP_DATA 未定义，请在此处插入数据对象');
+    }
   </script>
 </body>
 </html>
