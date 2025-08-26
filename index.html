@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>我的二手清单 | Second‑hand Listings | Elenco usato</title>
-  <meta name="description" content="二手物品展示页：支持多图（主图+gallery）、价格对比（原价/现价/节省）、复制直达链接、参考购买链接。" />
+  <title>Linaの无忧杂货铺 | Second‑hand Listings | Elenco usato</title>
+  <meta name="description" content="Hi～终于等到你，欢迎光临Lina的二手杂货铺，毕业出家具·学习用品·衣物等，希望你能挑选到自己喜欢且有缘的物品。不定期更新，先到先得，营业到十月初，倒计时" />
   <style>
     :root { --bg:#0b0c10; --card:#111218; --muted:#8b90a6; --fg:#eaeaf2; --border:#1a1c24; --chip:#1b1d26; --brand:#7c9cff; --ok:#8bf0b8; --warn:#ffd2d6; }
     html,body{height:100%}
@@ -75,7 +75,7 @@
     // 多语言字典（界面用语）
     const I18N={ zh:{btnCopy:'复制链接',btnWant:'我想要',btnLink:'参考链接',priceOld:'原价',priceNow:'现价',priceSave:'节省'}, en:{btnCopy:'Copy link',btnWant:'I want it',btnLink:'Reference link',priceOld:'Original',priceNow:'Now',priceSave:'Save'}, it:{btnCopy:'Copia link',btnWant:'Mi interessa',btnLink:'Link di riferimento',priceOld:'Prezzo originale',priceNow:'Prezzo attuale',priceSave:'Risparmi'} };
     const LANG='zh';
-    const seller={ contact:'WeChat: your_wechat · Email: melina.di.zeta@gmail.com', defaultCurrency:'EUR' };
+    const seller={ contact:'WeChat: PhD_MissMei · Email: melina.di.zeta@gmail.com', defaultCurrency:'EUR' };
     const $=s=>document.querySelector(s); const byId=id=>document.getElementById(id);
     function fmt(n,c){try{return new Intl.NumberFormat(undefined,{style:'currency',currency:c,maximumFractionDigits:n%1?2:0}).format(n)}catch(e){return `${c} ${n}`}}
     function saveCalc(it){const o=Number(it.originalPrice||0),p=Number(it.price||0);if(!o||!p||p>=o)return null;const s=o-p;const r=Math.round(s/o*100);return{s,pct:r}}
