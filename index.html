@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Linaの无忧杂货铺 | Second‑hand Listings | Elenco usato</title>
+  <title>Linaの无忧杂货铺 | Second-hand Listings | Elenco usato</title>
   <style>
     :root { --bg:#0b0c10; --card:#111218; --muted:#8b90a6; --fg:#eaeaf2; --border:#1a1c24; --chip:#1b1d26; --brand:#7c9cff; --ok:#8bf0b8; --warn:#ffd2d6; }
     body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.65 system-ui,-apple-system,Segoe UI,Roboto,'PingFang SC','Noto Sans CJK SC',Arial}
@@ -22,6 +22,8 @@
     .card:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.24)}
     .thumb{aspect-ratio:4/3;width:100%;object-fit:cover;display:block;background:#0a0b10;cursor:pointer}
     .badge{position:absolute;top:10px;right:10px;background:rgba(10,11,20,.6);border:1px solid var(--border);color:#fff;padding:6px 10px;border-radius:12px;font-weight:800;font-size:13px}
+    .badge.sold{background:#7a1f1f;border:none}
+    .badge.reserved{background:#6b5b15;border:none}
     .content{padding:12px 14px 14px;display:grid;gap:10px}
     .meta{display:flex;gap:6px;flex-wrap:wrap}
     .tag{background:var(--chip);border:1px solid var(--border);color:#b9bfd7;border-radius:999px;padding:3px 8px;font-size:11.5px}
@@ -29,6 +31,7 @@
     .btn{flex:1;text-align:center;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#151723;color:#e6e9f6;cursor:pointer;font-weight:700}
     .btn.primary{background:linear-gradient(180deg,#2f3cff,#6f86ff);border:none}
     .btn.link{background:#0d1117;color:#9fb4ff;text-decoration:underline;flex:1}
+    .btn[disabled]{opacity:.5;pointer-events:none;filter:grayscale(1)}
     .pricebox{display:flex;flex-direction:column;gap:4px}
     .line{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
     .oldprice{color:#9aa2b2;text-decoration:line-through;font-size:13px}
@@ -45,37 +48,48 @@
     .lb-nav{position:fixed;inset:0;display:flex;align-items:center;justify-content:space-between;pointer-events:none}
     .lb-btn{pointer-events:auto;user-select:none;cursor:pointer;background:rgba(255,255,255,.12);border:1px solid #555;color:#fff;padding:10px 14px;border-radius:12px;margin:0 14px;font-weight:800}
     .lb-close{position:fixed;top:16px;right:16px}
-    /* 新增：公告 + 倒计时 */
     .notice{display:flex;gap:12px;justify-content:space-between;align-items:center;border:1px solid var(--border);background:#10121a;border-radius:12px;padding:10px 12px;margin-top:8px}
     .notice-text{font-size:13.5px;color:#cfd3e4}
     .notice-timer{text-align:right;min-width:220px}
     .notice-timer small{display:block;color:var(--muted);margin-bottom:2px}
-    #countdown{font-weight:900;font-size:14.5px;color:var(--ok);letter-spacing:.3px}
+    #countdown{font-weight:900;font-size:14.5px;color:#8bf0b8;letter-spacing:.3px}
     @media(max-width:640px){.notice{flex-direction:column;align-items:flex-start}.notice-timer{text-align:left;min-width:auto;width:100%}}
+
+    /* SOLD/RESERVED 视觉效果 */
+    .card.sold .thumb,
+    .card.reserved .thumb{filter:grayscale(1) contrast(.9) brightness(.85)}
+    .card.sold .itemTitle::after{content:" · 已售出"; color:#ffb4b4; font-size:12px; font-weight:700; margin-left:6px}
+    .card.reserved .itemTitle::after{content:" · 已预留"; color:#ffd18a; font-size:12px; font-weight:700; margin-left:6px}
   </style>
 </head>
 <body>
   <div class="container">
     <header>
       <div class="title">
-        <h1>Linaの无忧杂货铺 | Second‑hand Listings | Elenco usato</h1>
-        <span class="subtitle"> 📅 10 Sep 23:00 Updated ✅ 已更新 · 毕业出二手 · 先到先得 · 分类筛选 <br>The author is currently busy (and a bit lazy 🙈) preparing for her PhD defense, so not everything is in bilingual format. If your language is English/Italiano (or your mother tongue), please kindly use Google Translator on the web version. Thank you! 😅</span>
+        <h1>Linaの无忧杂货铺 | Second-hand Listings | Elenco usato</h1>
+        <span class="subtitle"> 📅 10 Sep 23:00 Updated ✅ · 毕业出二手 · 先到先得 · 分类筛选 <br>The author is currently busy (and a bit lazy 🙈) preparing for her PhD defense, so not everything is in bilingual format. If your language is English/Italiano (or your mother tongue), please kindly use Google Translator on the web version. Thank you! 😅</span>
       </div>
       <div class="toolbar"><span id="count">0 items</span> · <span id="contact"></span></div>
       <div class="filter">
-        <label for="categoryFilter">分类·Categories:：</label>
+        <label for="categoryFilter">分类·Categories：</label>
         <select id="categoryFilter">
           <option value="all">全部·All</option>
         </select>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)">
+          <input type="checkbox" id="onlyAvail" />
+          仅看在售
+        </label>
       </div>
-      <!-- 新增：中英双语欢迎语 + 到 10/03 的倒计时 -->
+
       <div class="notice" aria-live="polite">
         <div class="notice-text">
-          <strong>Hi～终于等到你！🌟</strong> 欢迎光临Lina的二手杂货铺｜毕业出 家具·学习用品·衣物等<br>希望你能挑选到自己喜欢且有缘的物品~📅营业至十月三日 <br>
+          <strong>Hi～终于等到你！🌟</strong> 欢迎光临Lina的二手杂货铺｜毕业出 家具·学习用品·衣物等<br>
+          希望你能挑选到自己喜欢且有缘的物品~📅营业至十月三日 <br>
           <em>Hi~ finally, you’re here!</em>  🌟 Welcome to Lina’s cozy little second-hand shop ｜Furniture, Study supplies, Clothes...✨ <br>
           I hope you’ll find something you like and feel a special connection with~ 💛 <br>📅 Open until October 3rd.<br>
           <hr>⚠️ Please note: all items are second-hand, NOT brand new! ✨  <br>⚠️请注意：所有物品都是二手的，不是全新的！<br>
-          💡 For the condition, please check the tag description — for example,  <strong>💡8/10 <strong> means 80% new (gently used).<br>对于状况，请检查标签描述 - 例如，8/10 表示八成新（轻度使用）。<br>
+          💡 For the condition, please check the tag description — for example, <strong>8/10</strong> means 80% new (gently used).<br>
+          对于状况，请检查标签描述 - 例如，<strong>8/10</strong> 表示八成新（轻度使用）。<br>
           <hr>
         </div>
         <div class="notice-timer">
@@ -118,13 +132,30 @@
 
     function createCard(item){
       const dict=I18N[LANG]; const currency=item.currency||seller.defaultCurrency;
-      const el=document.createElement('article'); el.className='card'; el.id=item.id||('item-'+Math.random().toString(36).slice(2,8));
+
+      // 安全 id（数字开头自动加前缀）
+      const rawId=item.id||('item-'+Math.random().toString(36).slice(2,8));
+      const safeId=/^[A-Za-z]/.test(rawId)?rawId:'c'+rawId;
+
+      const state=(item.status||'available').toLowerCase(); // available | sold | reserved
+
+      const el=document.createElement('article');
+      el.className='card'+(state!=='available'?' '+state:'');
+      el.id=safeId;
+
       const mainImg=item.img || (item.gallery&&item.gallery[0]);
       const savings=saveCalc(item);
+
+      const badgeHTML = state==='sold'
+        ? `<div class="badge sold">SOLD</div>`
+        : (state==='reserved'
+            ? `<div class="badge reserved">RESERVED</div>`
+            : `<div class="badge">${fmt(item.price,currency)}</div>`);
+
       el.innerHTML=`
         <div class="media">
           <img class="thumb" src="${mainImg}" alt="${item.title}" onerror="this.onerror=null;this.src='assets/placeholder.jpg';">
-          <div class="badge">${fmt(item.price,currency)}</div>
+          ${badgeHTML}
         </div>
         <div class="content">
           <h3 class="itemTitle" style="margin:0;font-size:17px">${item.title}</h3>
@@ -133,8 +164,12 @@
           <div class="meta"></div>
           <div class="thumbs"></div>
           <div class="actions">
-            <button class="btn" data-copy="#${el.id}">${dict.btnCopy}</button>
-            <a class="btn primary" href="mailto:?subject=${encodeURIComponent('Inquiry: '+item.title)}&body=${encodeURIComponent(location.href.split('#')[0]+'#'+el.id)}">${dict.btnWant}</a>
+            <button class="btn" data-copy="#${safeId}">${dict.btnCopy}</button>
+            ${
+              state==='available'
+              ? `<a class="btn primary" href="mailto:?subject=${encodeURIComponent('Inquiry: '+item.title)}&body=${encodeURIComponent(location.href.split('#')[0]+'#'+safeId)}">${dict.btnWant}</a>`
+              : `<button class="btn primary" disabled aria-disabled="true">${state==='sold'?'SOLD':'RESERVED'}</button>`
+            }
             ${item.link? `<a class="btn link" href="${item.link}" target="_blank" rel="noopener noreferrer">${dict.btnLink}</a>`:''}
           </div>
         </div>`;
@@ -143,7 +178,7 @@
       if(item.category) meta.appendChild(chip(item.category));
       if(item.condition) meta.appendChild(chip(item.condition));
       if(item.location) meta.appendChild(chip(item.location));
-      if(item.status) meta.appendChild(chip(item.status));
+      if(item.status)   meta.appendChild(chip(item.status));
 
       if(Array.isArray(item.gallery) && item.gallery.length){
         const bar=el.querySelector('.thumbs');
@@ -162,14 +197,14 @@
 
       el.querySelector('[data-copy]').addEventListener('click',e=>{
         const h=e.currentTarget.getAttribute('data-copy'); const url=location.href.split('#')[0]+h;
-        navigator.clipboard?.writeText(url).then(()=>{e.currentTarget.textContent='✔'; setTimeout(()=>e.currentTarget.textContent=dict.btnCopy,900)});
+        navigator.clipboard?.writeText(url).then(()=>{e.currentTarget.textContent='✔'; setTimeout(()=>e.currentTarget.innerHTML=dict.btnCopy,900)});
       });
 
       el.querySelector('.thumb').addEventListener('click',()=>{
-        const list = (Array.isArray(item.gallery)&&item.gallery.length)? item.gallery : [mainImg];
-        const current = el.querySelector('.thumb').getAttribute('src');
-        const startIndex = Math.max(0, list.indexOf(current));
-        openLB(list, startIndex);
+        const list=(Array.isArray(item.gallery)&&item.gallery.length)?item.gallery:[mainImg];
+        const current=el.querySelector('.thumb').getAttribute('src');
+        const startIndex=Math.max(0,list.indexOf(current));
+        openLB(list,startIndex);
       });
 
       return el;
@@ -177,46 +212,54 @@
 
     function render(data,filterCat='all'){
       const grid=byId('grid'); grid.innerHTML='';
-      const items=data.items.filter(it=> filterCat==='all' || it.category===filterCat);
+      const onlyAvail=byId('onlyAvail')?.checked;
+
+      const items=data.items.filter(it=>{
+        const catOK = (filterCat==='all' || (it.category||'').trim()===filterCat);
+        const stOK  = !onlyAvail || String(it.status||'available').toLowerCase()==='available';
+        return catOK && stOK;
+      });
+
       items.forEach(it=> grid.appendChild(createCard(it)));
       byId('count').textContent = `${items.length} items`;
       byId('contact').innerHTML = seller.contact;
-      if(location.hash){ document.querySelector(location.hash)?.scrollIntoView({behavior:'smooth',block:'center'}); }
+
+      // 用 getElementById 更稳
+      if (location.hash) {
+        const el = document.getElementById(location.hash.slice(1));
+        el?.scrollIntoView({behavior:'smooth', block:'center'});
+      }
     }
 
     function setup(data){
       if(!data || !data.items){ console.error('缺少数据 window.APP_DATA'); return; }
-      const categories=[...new Set(data.items.map(it=>it.category).filter(Boolean))];
+      const categories=[...new Set(data.items.map(it=>(it.category||'').trim()).filter(Boolean))];
       const sel=byId('categoryFilter');
       categories.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
       sel.addEventListener('change',()=>render(data,sel.value));
+      byId('onlyAvail')?.addEventListener('change',()=>render(data,sel.value));
       render(data);
     }
 
-    // 新增：到 2025-10-03 的倒计时（以浏览器本地时区计算）
+    // 截止倒计时
     function startCountdown(){
       const el=byId('countdown'); if(!el) return;
-      const deadline=new Date('2025-10-03T23:59:59'); // 本地时间 10/03 23:59:59
+      const deadline=new Date('2025-10-03T23:59:59');
       function pad(n){return String(n).padStart(2,'0');}
       function tick(){
         const now=new Date();
         const ms=deadline-now;
         if(ms<=0){ el.textContent='已结束 / Closed'; el.style.color='#ff9aa2'; clearInterval(t); return; }
-        const sec=Math.floor(ms/1000)%60;
-        const min=Math.floor(ms/1000/60)%60;
-        const hr =Math.floor(ms/1000/60/60)%24;
-        const day=Math.floor(ms/1000/60/60/24);
+        const sec=Math.floor(ms/1000)%60, min=Math.floor(ms/1000/60)%60, hr=Math.floor(ms/1000/60/60)%24, day=Math.floor(ms/1000/60/60/24);
         el.textContent=`${day} 天 ${pad(hr)}:${pad(min)}:${pad(sec)} / ${day}d ${pad(hr)}:${pad(min)}:${pad(sec)}`;
       }
-      tick();
-      const t=setInterval(tick,1000);
+      tick(); const t=setInterval(tick,1000);
     }
     document.addEventListener('DOMContentLoaded', startCountdown);
   </script>
 
-
-    <script>
-    // ======= 你的数据（已修正语法 & 易读排版） =======
+  <script>
+    // ======= 你的完整数据（含 sold/available） =======
     window.APP_DATA = {
       items: [
         {
@@ -672,9 +715,9 @@
             'assets/jd/jd10_pbj/jd10_3.JPG'
           ],
           date: '2025-08-24',
-          status: 'available',
-         },
-          {
+          status: 'available'
+        },
+        {
           id: 'jd11_rice',
           title: '小米电饭煲1.6L·智能预约·不粘锅',
           desc: '400W强力烹饪，不粘锅涂层，赠送饭勺和香米',
@@ -686,8 +729,8 @@
           location: '📍Como/Milano',
           img: 'assets/jd/jd11_rice/jd11.jpg',
           date: '2025-08-24',
-          status: 'available',
-         },
+          status: 'available'
+        },
         {
           id: 'jd12_water',
           title: '小米恒温电水壶·智能保温·数显温度',
@@ -700,9 +743,9 @@
           location: '📍Como/Milano',
           img: 'assets/jd/jd12_water/jd12.jpg',
           date: '2025-08-24',
-          status: 'available',
-         },
-       {
+          status: 'available'
+        },
+        {
           id: 'jd13_lamp2',
           title: '小米智能护眼台灯·声控·苹果智能家居生态·Siri语音控制',
           desc: '精致大气，护眼，灯光可调节',
@@ -718,9 +761,9 @@
             'assets/jd/jd13_lamp2/jd13_1.jpg'
           ],
           date: '2025-08-24',
-          status: 'available',
-         },
-         {
+          status: 'available'
+        },
+        {
           id: 'jd14_table',
           title: '家居吧台+2凳子',
           desc: '美观精致，质量上乘，可两人小酌或一人吃饭看剧|120*40*35 cm L*W',
@@ -738,9 +781,9 @@
             'assets/jd/jd14_table/jd14_4.jpg'
           ],
           date: '2025-08-24',
-          status: 'available',
-         },
-         {
+          status: 'available'
+        },
+        {
           id: 'jd15_chair',
           title: '躺平摇摇椅',
           desc: '看剧午休小憩超级舒服',
@@ -757,8 +800,8 @@
             'assets/jd/jd15_chair/jd15_3.jpg'
           ],
           date: '2025-08-24',
-          status: 'available',
-         },
+          status: 'available'
+        },
         {
           id: 'st1_mouse',
           title: '罗技 POP 无线鼠标',
@@ -780,8 +823,8 @@
         },
         {
           id: 'st2_monitor',
-          title: 'Lenovo L24e‑30 显示器（1️⃣）',
-          desc: '23.8" FHD 1920×1080 · IPS · 4ms · 75Hz · HDMI/VGA · FreeSync',
+          title: 'Lenovo L24e-30 显示器（1️⃣）',
+          desc: '23.8\" FHD 1920×1080 · IPS · 4ms · 75Hz · HDMI/VGA · FreeSync',
           price: 80,
           originalPrice: 158.99,
           currency: 'EUR',
@@ -799,8 +842,8 @@
         },
         {
           id: 'st2_monitor_2',
-          title: 'Lenovo Q24i‑1L 显示器（2️⃣）',
-          desc: '23.8" FHD · IPS · 窄边框 · FreeSync · 4ms · 75Hz · HDMI/VGA',
+          title: 'Lenovo Q24i-1L 显示器（2️⃣）',
+          desc: '23.8\" FHD · IPS · 窄边框 · FreeSync · 4ms · 75Hz · HDMI/VGA',
           price: 80,
           originalPrice: 168.31,
           currency: 'EUR',
@@ -838,7 +881,7 @@
         {
           id: 'st4_laptop_stand',
           title: '可调节垂直笔记本支架',
-          desc: '6061 铝合金 · CNC 精密加工 · 适配至 17" · 通风散热 · 防滑硅胶',
+          desc: '6061 铝合金 · CNC 精密加工 · 适配至 17\" · 通风散热 · 防滑硅胶',
           price: 5,
           originalPrice: 15.99,
           currency: 'EUR',
@@ -856,7 +899,7 @@
         },
         {
           id: 'st5_charger',
-          title: 'Anker USB‑C 充电器 47W (Nano 3)',
+          title: 'Anker USB-C 充电器 47W (Nano 3)',
           desc: '2 口 GaN 快充；适配 iPhone/Galaxy/Pixel/iPad 等（不含线）',
           price: 5,
           originalPrice: 19.99,
@@ -913,7 +956,7 @@
         }
       ]
     };
-      
+
     if(window.APP_DATA){
       setup(window.APP_DATA);
     } else {
